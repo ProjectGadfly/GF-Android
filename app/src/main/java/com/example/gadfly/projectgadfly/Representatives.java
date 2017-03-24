@@ -18,4 +18,14 @@ class Representatives {
         this.party = party;
     }
 
+    Representatives(String name, String phone_number, String photo_url) {
+        this.name = name;
+        this.phone_number = phone_number;
+        this.email = "STOCK";
+        this.district = "STOCK";
+        this.state = "STOCK";
+        this.photo_url = photo_url;
+        this.party = "STOCK";
+    }
+
 }

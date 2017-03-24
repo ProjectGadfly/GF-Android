@@ -223,6 +223,16 @@ public class MainActivity extends AppCompatActivity
 //    Web = null;
 
 
+    public boolean isConnected() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        return isConnected;
+    }
+
     public void clickAdapt(View v) {
 //        Bundle bundle = new Bundle();
 //        Log.e("ERROR2", result1.substring(0,20));
@@ -240,10 +250,15 @@ public class MainActivity extends AppCompatActivity
 //        edit = Home.get
 //        fragmentManager.beginTransaction().replace(R.id.content_main, Rep).commit();
 //
-        final Intent intent = new Intent(getApplicationContext(), AlwaysRunActivity.class);
-        intent.putExtra("url", "https://openstates.org/api/v1/legislators/geo/?lat=44.76&long=-93.27");
-        startActivity(intent);
-        finish();
+        if (isConnected()) {
+            final Intent intent = new Intent(getApplicationContext(), AlwaysRunActivity.class);
+            intent.putExtra("url", "https://openstates.org/api/v1/legislators/geo/?lat=44.76&long=-93.27");
+            startActivity(intent);
+            finish();
+        } else {
+            Toast toast = Toast.makeText(getApplicationContext(),"You are not conntected to the internet",Toast.LENGTH_LONG);
+            toast.show();
+        }
 
     }
 

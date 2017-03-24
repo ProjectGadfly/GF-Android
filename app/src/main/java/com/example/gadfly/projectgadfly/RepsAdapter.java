@@ -1,14 +1,20 @@
 package com.example.gadfly.projectgadfly;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
+
 
 /**
  * Created by papak on 3/21/2017.
@@ -28,7 +34,7 @@ public class RepsAdapter extends ArrayAdapter<Representatives> {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_rep, parent, false);
             }
             // Lookup view for data population
-            TextView Name = (TextView) convertView.findViewById(R.id.rep_name);
+            final TextView Name = (TextView) convertView.findViewById(R.id.rep_name);
 //            TextView District = (TextView) convertView.findViewById(R.id.district);
 //            TextView State = (TextView) convertView.findViewById(R.id.state);
 //            TextView Phone = (TextView) convertView.findViewById(R.id.phone);
@@ -37,6 +43,9 @@ public class RepsAdapter extends ArrayAdapter<Representatives> {
             ImageView Photo = (ImageView) convertView.findViewById(R.id.photo_url);
             // Populate the data into the template view using the data object
             Name.setText(user.name);
+            Glide.with(getContext())
+                    .load(user.photo_url)
+                    .into(Photo);
 //            District.setText(user.district);
 //            State.setText(user.state);
 //            Phone.setText(user.phone_number);
@@ -48,6 +57,19 @@ public class RepsAdapter extends ArrayAdapter<Representatives> {
 //                    .override(200,400)
 //                    .into(Photo);
             // Return the completed view to render on screen
+            Button btn = (Button) convertView.findViewById(R.id.callButton);
+            final TextView phoneNumber = (TextView) convertView.findViewById(R.id.phone);
+            phoneNumber.setText(user.phone_number);
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    String number = (String) v.getTag();
+                    Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                    String number = (String) phoneNumber.getText();
+                    callIntent.setData(Uri.parse("tel:" + number));
+                    getContext().startActivity(callIntent);
+                }
+            });
             return convertView;
         }
 }
