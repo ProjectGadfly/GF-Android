@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="3dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <ImageView
+            android:id="@+id/photo_url"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@color/colorPrimary"
+            android:padding="3dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rep_name"
+            android:text="Name"
+            android:padding="3dp"
+            android:layout_toRightOf="@+id/photo_url"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/state"
+            android:text="Name"
+            android:layout_below="@+id/rep_name"
+            android:padding="3dp"
+            android:layout_toRightOf="@+id/photo_url"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/phone"
+            android:layout_below="@+id/state"
+            android:text="Name"
+            android:padding="3dp"
+            android:layout_toRightOf="@+id/photo_url"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/district"
+            android:text="Name"
+            android:layout_below="@id/phone"
+            android:padding="3dp"
+            android:layout_toRightOf="@+id/photo_url"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/email"
+            android:layout_toRightOf="@+id/photo_url"
+            android:layout_below="@id/district"
+            android:padding="3dp"
+            android:text="email" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/party"
+            android:text="Name"
+            android:layout_toRightOf="@+id/photo_url"
+            android:padding="3dp"
+            android:layout_below="@id/email"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CALL"
+        android:id="@+id/callButton"
+        android:layout_toRightOf="@+id/photo_url"
+        android:layout_below="@id/party" />
+
+
+    </RelativeLayout>

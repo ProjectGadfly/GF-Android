@@ -1,0 +1,52 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.gadfly.projectgadfly.HomeFragment">
+
+        <ImageView
+            android:contentDescription="@string/logo_content_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/gadfly1"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/logo"
+            android:layout_margin="20dp"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/enter_address_hint"
+            android:layout_centerInParent="true"
+            android:layout_below="@id/logo"
+            android:imeOptions="actionDone"
+            android:lines="1"
+            android:id="@+id/addressfield" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/addressfield"
+            android:layout_centerInParent="true"
+            android:text="@string/submit_button"
+            android:id="@+id/submitButton"
+            android:onClick="clickAction"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/submitButton"
+            android:layout_centerHorizontal="true"
+            android:text="@string/website_button"
+            android:id="@+id/webButton"
+            android:onClick="clickWebsite"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/webButton"
+            android:id="@+id/legislatorButton"
+            android:text="legislator button"
+            android:onClick="clickLegislator" />
+
+</RelativeLayout>

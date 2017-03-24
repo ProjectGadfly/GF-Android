@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Project Gadfly</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="submit_button">Submit</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="invalid_address">Invalid Address</string>
+    <string name="no_internet">You are not connected to the internet.</string>
+    <string name="ask_for_address">Please enter an address.</string>
+    <string name="logo_content_description">Gadfly Logo</string>
+    <string name="enter_address_hint">Enter address here.</string>
+    <string name="website_button">Website Lookup</string>
+    <string name="title_activity_always_run">AlwaysRunActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
