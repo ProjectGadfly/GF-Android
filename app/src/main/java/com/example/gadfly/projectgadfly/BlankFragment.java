@@ -7,9 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import java.util.ArrayList;
 
 
@@ -71,13 +68,13 @@ public class BlankFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_blank, container, false);
         ArrayList<Representatives> arrayOfUsers = new ArrayList<Representatives>();
-        String json = getArguments().getString("json");
-        JSONArray jsonArray = null;
-        try {
-            jsonArray = new JSONArray(json);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        String json = getArguments().getString("json");
+//        JSONArray jsonArray = null;
+//        try {
+//            jsonArray = new JSONArray(json);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 //        if js
         // Create the adapter to convert the array to views
         RepsAdapter adapter = new RepsAdapter(getActivity(), arrayOfUsers);

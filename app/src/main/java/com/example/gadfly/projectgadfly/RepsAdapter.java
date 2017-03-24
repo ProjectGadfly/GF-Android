@@ -8,8 +8,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
 
 /**
@@ -45,10 +43,10 @@ public class RepsAdapter extends ArrayAdapter<Representatives> {
             Email.setText(user.email);
             Party.setText(user.party);
 //            Photo.setImageDrawable(R.drawable.rep1);
-            Glide.with(getContext())
-                    .load(user.photo_url)
-                    .override(200,400)
-                    .into(Photo);
+//            Glide.with(getContext())
+//                    .load("http://www.house.leg.state.mn.us/hinfo/memberimgls90/tn_56B.jpg?v=2017")
+//                    .override(200,400)
+//                    .into(Photo);
             // Return the completed view to render on screen
             return convertView;
         }

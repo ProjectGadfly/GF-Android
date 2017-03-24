@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GF-Android.iml" filepath="$PROJECT_DIR$/GF-Android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ProjectGadfly.iml" filepath="$PROJECT_DIR$/ProjectGadfly.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

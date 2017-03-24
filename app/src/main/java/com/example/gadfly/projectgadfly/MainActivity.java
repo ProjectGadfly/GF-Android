@@ -235,10 +235,10 @@ public class MainActivity extends AppCompatActivity
 //    Web = null;
 
     public void clickAdapt(View v) {
-        new JsonTask().execute("https://openstates.org/api/v1/legislators/geo/?lat=44.76&long=-93.27");
-        Bundle bundle = new Bundle();
-        bundle.putString("json", result1);
-        Log.e("ERROR", result1.substring(0,20));
+//        new JsonTask().execute("https://openstates.org/api/v1/legislators/geo/?lat=44.76&long=-93.27");
+//        Bundle bundle = new Bundle();
+//        bundle.putString("json", result1);
+//        Log.e("ERROR", result1.substring(0,20));
 //        Rep = new RepresentativesDisplay();
 //        Rep.setArguments(bundle);
 //        fragmentManager
@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity
 //        fragmentManager.beginTransaction().replace(R.id.content_main, Rep).commit();
 //
         final Intent intent = new Intent(getApplicationContext(), AlwaysRunActivity.class);
-        intent.putExtras(bundle);
+//        intent.putExtras(bundle);
         startActivity(intent);
         finish();
 
