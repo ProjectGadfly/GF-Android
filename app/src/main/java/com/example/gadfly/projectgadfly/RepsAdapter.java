@@ -29,19 +29,19 @@ public class RepsAdapter extends ArrayAdapter<Representatives> {
             }
             // Lookup view for data population
             TextView Name = (TextView) convertView.findViewById(R.id.rep_name);
-            TextView District = (TextView) convertView.findViewById(R.id.district);
-            TextView State = (TextView) convertView.findViewById(R.id.state);
-            TextView Phone = (TextView) convertView.findViewById(R.id.phone);
-            TextView Email = (TextView) convertView.findViewById(R.id.email);
-            TextView Party = (TextView) convertView.findViewById(R.id.party);
+//            TextView District = (TextView) convertView.findViewById(R.id.district);
+//            TextView State = (TextView) convertView.findViewById(R.id.state);
+//            TextView Phone = (TextView) convertView.findViewById(R.id.phone);
+//            TextView Email = (TextView) convertView.findViewById(R.id.email);
+//            TextView Party = (TextView) convertView.findViewById(R.id.party);
             ImageView Photo = (ImageView) convertView.findViewById(R.id.photo_url);
             // Populate the data into the template view using the data object
             Name.setText(user.name);
-            District.setText(user.district);
-            State.setText(user.state);
-            Phone.setText(user.phone_number);
-            Email.setText(user.email);
-            Party.setText(user.party);
+//            District.setText(user.district);
+//            State.setText(user.state);
+//            Phone.setText(user.phone_number);
+//            Email.setText(user.email);
+//            Party.setText(user.party);
 //            Photo.setImageDrawable(R.drawable.rep1);
 //            Glide.with(getContext())
 //                    .load("http://www.house.leg.state.mn.us/hinfo/memberimgls90/tn_56B.jpg?v=2017")

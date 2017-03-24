@@ -1,5 +1,7 @@
 package com.example.gadfly.projectgadfly;
 
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -15,6 +17,17 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.google.zxing.integration.android.IntentIntegrator;
+
+import org.json.JSONArray;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 public class AlwaysRunActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -51,7 +64,15 @@ public class AlwaysRunActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         Bundle bundle = getIntent().getExtras();
-
+        String url = bundle.getString("url");
+        try {
+            Object result = new JsonTask().execute(url).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        bundle.putString("json", result1);
         fragmentManager = getSupportFragmentManager();
 
         alwaysRun = new BlankFragment();
@@ -127,4 +148,86 @@ public class AlwaysRunActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    ProgressDialog pd;
+    JSONArray jsonA;
+    String result1;
+
+    private class JsonTask extends AsyncTask<String, String, String> {
+
+
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            pd = new ProgressDialog(AlwaysRunActivity.this);
+            pd.setMessage("Please wait");
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        protected String doInBackground(String... params) {
+
+
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+
+            try {
+                URL url = new URL(params[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+
+
+                InputStream stream = connection.getInputStream();
+
+                reader = new BufferedReader(new InputStreamReader(stream));
+
+                StringBuffer buffer = new StringBuffer();
+                String line = "";
+
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line);
+//                    Log.d("Response: ", "> " + line);   //here u ll get whole response...... :-)
+
+                }
+
+                result1 = buffer.toString();
+                return result1;
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+                try {
+                    if (reader != null) {
+                        reader.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+//            try {
+////                result1 = result;
+//                Log.e("Error", result1.substring(0,20));
+////                jsonA = new JSONArray(result);
+//            } catch (JSONException e) {
+//                Log.e("ERROR", "NO JSON");
+//                e.printStackTrace();
+//            }
+            if (pd.isShowing()){
+                pd.dismiss();
+            }
+        }
+    }
+
 }
