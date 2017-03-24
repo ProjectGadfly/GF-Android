@@ -1,13 +1,11 @@
 package com.example.gadfly.projectgadfly;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -17,22 +15,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -234,12 +222,13 @@ public class MainActivity extends AppCompatActivity
     }
 //    Web = null;
 
+
     public void clickAdapt(View v) {
-//        new JsonTask().execute("https://openstates.org/api/v1/legislators/geo/?lat=44.76&long=-93.27");
 //        Bundle bundle = new Bundle();
+//        Log.e("ERROR2", result1.substring(0,20));
 //        bundle.putString("json", result1);
 //        Log.e("ERROR", result1.substring(0,20));
-//        Rep = new RepresentativesDisplay();
+//        Rep = new epresentativesDisplay();
 //        Rep.setArguments(bundle);
 //        fragmentManager
 //                .beginTransaction()
@@ -252,88 +241,10 @@ public class MainActivity extends AppCompatActivity
 //        fragmentManager.beginTransaction().replace(R.id.content_main, Rep).commit();
 //
         final Intent intent = new Intent(getApplicationContext(), AlwaysRunActivity.class);
-//        intent.putExtras(bundle);
+        intent.putExtra("url", "https://openstates.org/api/v1/legislators/geo/?lat=44.76&long=-93.27");
         startActivity(intent);
         finish();
 
-    }
-    ProgressDialog pd;
-    JSONArray jsonA;
-    String result1;
-    private class JsonTask extends AsyncTask<String, String, String> {
-
-
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            pd = new ProgressDialog(MainActivity.this);
-            pd.setMessage("Please wait");
-            pd.setCancelable(false);
-            pd.show();
-        }
-
-        protected String doInBackground(String... params) {
-
-
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-
-            try {
-                URL url = new URL(params[0]);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.connect();
-
-
-                InputStream stream = connection.getInputStream();
-
-                reader = new BufferedReader(new InputStreamReader(stream));
-
-                StringBuffer buffer = new StringBuffer();
-                String line = "";
-
-                while ((line = reader.readLine()) != null) {
-                    buffer.append(line);
-//                    Log.d("Response: ", "> " + line);   //here u ll get whole response...... :-)
-
-                }
-
-                return buffer.toString();
-
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-                try {
-                    if (reader != null) {
-                        reader.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            if (pd.isShowing()){
-                pd.dismiss();
-            }
-            try {
-                Log.e("Error", result.substring(0,20));
-                result1 = result;
-                jsonA = new JSONArray(result);
-            } catch (JSONException e) {
-                Log.e("ERROR", "NO JSON");
-                e.printStackTrace();
-            }
-        }
     }
 
 }

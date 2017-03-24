@@ -2,10 +2,16 @@ package com.example.gadfly.projectgadfly;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -67,6 +73,26 @@ public class BlankFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_blank, container, false);
+        String text = getArguments().getString("json");
+        Log.e("Errir", text.substring(0,20));
+        TextView t = (TextView) v.findViewById(R.id.jsonPlace);
+        t.setText(text);
+        String actualName = "";
+        JSONArray jsonArray;
+        JSONObject jsonObject1;
+        JSONObject jsonObject2;
+        try {
+            jsonArray = new JSONArray(text);
+            jsonObject1 = jsonArray.getJSONObject(0);
+            jsonObject2 = jsonArray.getJSONObject(1);
+            actualName = jsonObject1.getString("full_name");
+            Log.e("Errir", actualName);
+            t.setText(jsonObject1.getString("full_name"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
         ArrayList<Representatives> arrayOfUsers = new ArrayList<Representatives>();
 //        String json = getArguments().getString("json");
 //        JSONArray jsonArray = null;
@@ -80,7 +106,7 @@ public class BlankFragment extends Fragment {
         RepsAdapter adapter = new RepsAdapter(getActivity(), arrayOfUsers);
 
         // Attach the adapter to a ListView
-        Representatives newRep = new Representatives("NathansakjsajaMe", "5357268368", "emailhere", "district11",
+        Representatives newRep = new Representatives(actualName, "5357268368", "emailhere", "district11",
                 "state272", "url1", "party2");
         Representatives newRep1 = new Representatives("Alice Me", "5357268368", "emailhere", "district11",
                 "state272", "url1", "party2");
