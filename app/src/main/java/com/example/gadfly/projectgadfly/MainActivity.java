@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity
 //
         if (isConnected()) {
             final Intent intent = new Intent(getApplicationContext(), AlwaysRunActivity.class);
-            intent.putExtra("url", "https://openstates.org/api/v1/legislators/geo/?lat=44.76&long=-93.27");
+            intent.putExtra("url", "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper");
             startActivity(intent);
             finish();
         } else {
