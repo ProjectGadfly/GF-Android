@@ -14,22 +14,18 @@ import android.widget.EditText;
 public class HomeFragment extends Fragment {
     public View v;
     public EditText edit;
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//            super.onCreateView(inflater, container, savedInstanceState);
-            v = inflater.inflate(R.layout.home_fragment, container, false);
-//            edit = getEdit(v);
-            return v;
-        }
-//    @Override
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        v = inflater.inflate(R.layout.home_fragment, container, false);
+        return v;
+    }
+    //    @Override
 //    public void onAttach(Context context) {
 //        super.onAttach(context);
 //        edit = getEdit(v);
 //        return v;
 //    }
     public interface getText {
-       EditText getEdit(View v);
-}
-//    public EditText getEdit(View v) { return (EditText) v.findViewById(R.id.addressfield);
-//    }
+        EditText getEdit(View v);
+    }
 }
