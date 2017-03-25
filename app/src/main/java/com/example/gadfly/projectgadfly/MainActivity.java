@@ -49,18 +49,6 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        Realm.init(this);
-        SharedPreferences pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
-        b = new Bundle();
-        if(pref.getBoolean("activity_executed", false)){
-            Intent intent = new Intent(this, AlwaysRunActivity.class);
-            intent.putExtras(b);
-            startActivity(intent);
-            finish();
-        } else {
-            SharedPreferences.Editor ed = pref.edit();
-            ed.putBoolean("activity_executed", true);
-            ed.commit();
-        }
 
         setContentView(R.layout.activity_main);
 
@@ -271,6 +259,19 @@ public class MainActivity extends AppCompatActivity
 //        edit = Home.get
 //        fragmentManager.beginTransaction().replace(R.id.content_main, Rep).commit();
 //
+        SharedPreferences pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
+        b = new Bundle();
+        if(pref.getBoolean("activity_executed", false)){
+            Intent intent = new Intent(this, AlwaysRunActivity.class);
+            intent.putExtras(b);
+            startActivity(intent);
+            finish();
+        } else {
+            SharedPreferences.Editor ed = pref.edit();
+            ed.putBoolean("activity_executed", true);
+            ed.commit();
+        }
+
         if (isConnected()) {
             final Intent intent = new Intent(getApplicationContext(), AlwaysRunActivity.class);
             intent.putExtra("url", "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper");
