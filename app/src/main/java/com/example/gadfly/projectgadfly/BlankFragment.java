@@ -78,40 +78,34 @@ public class BlankFragment extends Fragment {
         TextView t = (TextView) v.findViewById(R.id.jsonPlace);
         t.setText(text);
         String actualName = "";
-        JSONArray jsonArray;
-        JSONObject jsonObject1;
-        JSONObject jsonObject2;
+        JSONArray jsonArray = null;
+
         try {
             jsonArray = new JSONArray(text);
-            jsonObject1 = jsonArray.getJSONObject(0);
-            jsonObject2 = jsonArray.getJSONObject(1);
-            actualName = jsonObject1.getString("full_name");
-            Log.e("Errir", actualName);
-            t.setText(jsonObject1.getString("full_name"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-
+        View button = inflater.inflate(R.layout.item_rep,container, false);
         ArrayList<Representatives> arrayOfUsers = new ArrayList<Representatives>();
-//        String json = getArguments().getString("json");
-//        JSONArray jsonArray = null;
-//        try {
-//            jsonArray = new JSONArray(json);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        if js
+
+        for (int i = 0; i<jsonArray.length(); i++) {
+
+            try {
+                JSONObject j = jsonArray.getJSONObject(i);
+                JSONArray officeA = j.getJSONArray("offices");
+                JSONObject office = officeA.getJSONObject(0);
+                arrayOfUsers.add(new Representatives(j.getString("full_name"),office.getString("phone"), j.getString("photo_url")));
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
         // Create the adapter to convert the array to views
         RepsAdapter adapter = new RepsAdapter(getActivity(), arrayOfUsers);
 
         // Attach the adapter to a ListView
-        Representatives newRep = new Representatives(actualName, "5357268368", "emailhere", "district11",
-                "state272", "url1", "party2");
-        Representatives newRep1 = new Representatives("Alice Me", "5357268368", "emailhere", "district11",
-                "state272", "url1", "party2");
-        adapter.add(newRep);
-        adapter.add(newRep1);
         ListView listView = (ListView) v.findViewById(R.id.listView);
         listView.setAdapter(adapter);
         return v;

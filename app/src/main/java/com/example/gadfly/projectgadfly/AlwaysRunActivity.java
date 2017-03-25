@@ -149,6 +149,8 @@ public class AlwaysRunActivity extends AppCompatActivity
         return true;
     }
 
+
+
     ProgressDialog pd;
     JSONArray jsonA;
     String result1;
@@ -210,6 +212,7 @@ public class AlwaysRunActivity extends AppCompatActivity
                     e.printStackTrace();
                 }
             }
+
             return null;
         }
 
