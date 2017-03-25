@@ -8,11 +8,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -120,6 +122,9 @@ public class AlwaysRunActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+
+            DialogFragment alertDialExample = new ForgetDialogFragment();
+            alertDialExample.show(getSupportFragmentManager(), "AlertDialogFragment");
             Intent intent = new Intent(this, MainActivity.class);
             SharedPreferences pref = getSharedPreferences("ActivityPREF", MainActivity.MODE_PRIVATE);
             SharedPreferences.Editor ed = pref.edit();
