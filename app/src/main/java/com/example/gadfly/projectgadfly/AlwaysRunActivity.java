@@ -56,9 +56,7 @@ public class AlwaysRunActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 qrScan.initiateScan();
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-            }
+    }
         });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -181,7 +179,6 @@ public class AlwaysRunActivity extends AppCompatActivity
 
         protected void onPreExecute() {
             super.onPreExecute();
-
             pd = new ProgressDialog(AlwaysRunActivity.this);
             pd.setMessage("Please wait");
             pd.setCancelable(false);
@@ -189,8 +186,6 @@ public class AlwaysRunActivity extends AppCompatActivity
         }
 
         protected String doInBackground(String... params) {
-
-
             HttpURLConnection connection = null;
             BufferedReader reader = null;
 
@@ -209,14 +204,10 @@ public class AlwaysRunActivity extends AppCompatActivity
 
                 while ((line = reader.readLine()) != null) {
                     buffer.append(line);
-//                    Log.d("Response: ", "> " + line);   //here u ll get whole response...... :-)
-
                 }
 
                 result1 = buffer.toString();
                 return result1;
-
-
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -233,21 +224,12 @@ public class AlwaysRunActivity extends AppCompatActivity
                     e.printStackTrace();
                 }
             }
-
             return null;
         }
 
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-//            try {
-////                result1 = result;
-//                Log.e("Error", result1.substring(0,20));
-////                jsonA = new JSONArray(result);
-//            } catch (JSONException e) {
-//                Log.e("ERROR", "NO JSON");
-//                e.printStackTrace();
-//            }
             if (pd.isShowing()){
                 pd.dismiss();
             }

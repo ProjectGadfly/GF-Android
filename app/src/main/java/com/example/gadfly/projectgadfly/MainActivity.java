@@ -22,23 +22,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
-    private double LatAdd = 0;
-    private double LngAdd = 0;
-    public EditText edit;
-
-
-    FragmentManager fragmentManager;
-    Fragment Home;
-    Fragment Web;
-    Fragment Rep;
-    AboutFragment aboutFragment;
-    Bundle b;
+    private EditText edit;
+    private FragmentManager fragmentManager;
+    private Fragment Home;
+    private AboutFragment aboutFragment;
+    private Bundle b;
 
     @Override
     protected void attachBaseContext(Context context) {
@@ -65,17 +55,10 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         fragmentManager = getSupportFragmentManager();
-//        Fragment Home = fragmentManager.findFragmentById(R.id.home_fragment);
         Home = new HomeFragment();
-//        edit = (EditText) Home.getView().findViewById(R.id.addressfield);
         fragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_in_l, R.anim.slide_out_r)
                 .add(Home, "HOMETAG").replace(R.id.content_main, Home).commit();
-
-//        edit = (EditText) Home.getView().findViewById(R.id.addressfield);
-//        LayoutInflater inflate = getLayoutInflater();
-//        View home = inflate.inflate(R.layout.home_fragment, null);
-//        edit = (EditText) home.findViewById(R.id.addressfield);
 
     }
 
@@ -126,10 +109,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         FragmentManager fragmentManager = getSupportFragmentManager();
-//        aboutFragment = new AboutFragment();
         aboutFragment = new AboutFragment();
         TeamFragment team = new TeamFragment();
-//        fragmentManager.beginTransaction().add(aboutFragment, "ABOUTTAG");
         if (id == R.id.homeView) {
             // Handle the camera action
             if (!fragmentManager.findFragmentByTag("HOMETAG").isVisible())
@@ -140,9 +121,7 @@ public class MainActivity extends AppCompatActivity
                     .addToBackStack(null)
                     .commit();
         } else if (id == R.id.about) {
-//            if (!fragmentManager.findFragmentByTag("ABOUTTAG").isAdded()) {
                 aboutFragment = new AboutFragment();
-//            }
             fragmentManager
                     .beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_in_l, R.anim.slide_out_r)
@@ -157,80 +136,11 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.content_main, team)
                     .addToBackStack(null)
                     .commit();
-        } //else if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//
-//        }
-
+        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-    private void getLocationFromAddress(String strAddress){
-        //Creates new geocoder object
-        Geocoder coder = new Geocoder(this);
-
-        List<Address> address = null;
-
-        // Attempt to get Location from entered address
-        try {
-            address = coder.getFromLocationName(strAddress,5);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Address location = null;
-
-        //Checks if address is valid and gets coordinates
-        if (address.size() != 0) {
-            location = address.get(0);
-            LatAdd = location.getLatitude();
-            LngAdd = location.getLongitude();
-        } else {
-            final Toast toast = Toast.makeText(getApplicationContext(), R.string.invalid_address, Toast.LENGTH_LONG);
-            toast.show();
-        }
-    }
-
-    public void clickAction(View v) {
-        // Get entered address from text field
-        String address = edit.getText().toString();
-        //Store Application Context for easy referencing later
-        Context context = getApplicationContext();
-
-        //Check if the user has entered any text
-        if (!address.isEmpty()) {
-            Toast toast = Toast.makeText(context, address, Toast.LENGTH_LONG);
-
-            // Checks to see whether we have an active internet connection
-            ConnectivityManager cm =
-                    (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            boolean isConnected = activeNetwork != null &&
-                    activeNetwork.isConnectedOrConnecting();
-
-            // Searches for entered location if there is an internet connection
-            if (isConnected) {
-                getLocationFromAddress(address);
-                toast.show();
-                final Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                b.putDouble("lat", LatAdd);
-                b.putDouble("lng", LngAdd);
-                intent.putExtras(b);
-                startActivity(intent);
-            } else {
-                toast = Toast.makeText(context, R.string.no_internet, Toast.LENGTH_LONG);
-                toast.show();
-            }
-        } else {
-            final Toast toast = Toast.makeText(getApplicationContext(), R.string.ask_for_address, Toast.LENGTH_LONG);
-            toast.show();
-        }
-    }
-//    Web = null;
-
 
     public boolean isConnected() {
         ConnectivityManager cm =
@@ -243,22 +153,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void clickAdapt(View v) {
-//        Bundle bundle = new Bundle();
-//        Log.e("ERROR2", result1.substring(0,20));
-//        bundle.putString("json", result1);
-//        Log.e("ERROR", result1.substring(0,20));
-//        Rep = new epresentativesDisplay();
-//        Rep.setArguments(bundle);
-//        fragmentManager
-//                .beginTransaction()
-//                .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_in_l, R.anim.slide_out_r)
-//                .replace(R.id.content_main, Rep)
-//                .addToBackStack(null)
-//                .commit();
-//        t.setText(jsonA.toString());
-//        edit = Home.get
-//        fragmentManager.beginTransaction().replace(R.id.content_main, Rep).commit();
-//
         SharedPreferences pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
         b = new Bundle();
         if(pref.getBoolean("activity_executed", false)){
@@ -283,5 +177,4 @@ public class MainActivity extends AppCompatActivity
         }
 
     }
-
 }
