@@ -1,9 +1,10 @@
 package com.example.gadfly.projectgadfly;
-
+import android.content.SharedPreferences;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -16,13 +17,13 @@ import android.app.AlertDialog;
 import android.widget.Toast;
 
 public class ForgetDialogFragment extends DialogFragment {
-    public static ForgetDialogFragment newInstance(int title) {
-        ForgetDialogFragment frag = new ForgetDialogFragment();
-        Bundle args = new Bundle();
-        args.putInt("title", title);
-        frag.setArguments(args);
-        return frag;
-    }
+//    public static ForgetDialogFragment newInstance(int title) {
+//        ForgetDialogFragment frag = new ForgetDialogFragment();
+//        Bundle args = new Bundle();
+//        args.putInt("title", title);
+//        frag.setArguments(args);
+//        return frag;
+//    }
     @Override
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -34,7 +35,13 @@ public class ForgetDialogFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(getActivity(), MainActivity.class);
+
+                        SharedPreferences pref = getContext().getSharedPreferences("ActivityPREF", MainActivity.MODE_PRIVATE);
+                        SharedPreferences.Editor ed = pref.edit();
+                        ed.putBoolean("need_address", true);
+                        ed.commit();
                         startActivity(intent);
+                        getActivity().finish();
                     }})
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener(){
 
