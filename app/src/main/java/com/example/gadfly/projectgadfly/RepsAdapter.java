@@ -2,7 +2,11 @@ package com.example.gadfly.projectgadfly;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +16,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
+
 
 
 /**
@@ -42,10 +48,32 @@ public class RepsAdapter extends ArrayAdapter<Representatives> {
 //            TextView Party = (TextView) convertView.findViewById(R.id.party);
             ImageView Photo = (ImageView) convertView.findViewById(R.id.photo_url);
             // Populate the data into the template view using the data object
+            Context context = getContext();
+            final PackageManager m = context.getPackageManager();
             Name.setText(user.name);
             Glide.with(getContext())
                     .load(user.photo_url)
+                    .placeholder(R.drawable.person_outline)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .override(120,120)
                     .into(Photo);
+
+            AsyncTask t = new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    String s = AlwaysRunActivity.PACKAGE_NAME;
+                    PackageInfo p = null;
+                    try {
+                        p = m.getPackageInfo(s, 0);
+                    } catch (PackageManager.NameNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    s = p.applicationInfo.dataDir;
+                    Log.e("Err", s);
+                    return null;
+                }
+            };
+
 //            District.setText(user.district);
 //            State.setText(user.state);
 //            Phone.setText(user.phone_number);
@@ -63,7 +91,6 @@ public class RepsAdapter extends ArrayAdapter<Representatives> {
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    String number = (String) v.getTag();
                     Intent callIntent = new Intent(Intent.ACTION_DIAL);
                     String number = (String) phoneNumber.getText();
                     callIntent.setData(Uri.parse("tel:" + number));
