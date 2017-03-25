@@ -17,6 +17,8 @@
         android:contentDescription="Logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"
         android:src="@drawable/gadfly1"
         android:layout_centerHorizontal="true"
         android:id="@+id/logo"

@@ -122,12 +122,16 @@ public class AlwaysRunActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+
             DialogFragment alertDialExample = new ForgetDialogFragment();
             alertDialExample.show(getSupportFragmentManager(), "AlertDialogFragment");
-           // Intent intent = new Intent(this, AlwaysRunActivity.class);
-           // startActivity(intent);
-           // finish();
-
+            Intent intent = new Intent(this, MainActivity.class);
+            SharedPreferences pref = getSharedPreferences("ActivityPREF", MainActivity.MODE_PRIVATE);
+            SharedPreferences.Editor ed = pref.edit();
+            ed.putBoolean("need_address", true);
+            ed.commit();
+            startActivity(intent);
+            finish();
             return true;
         }
 
