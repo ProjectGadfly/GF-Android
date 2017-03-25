@@ -3,8 +3,6 @@ package com.example.gadfly.projectgadfly;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.Address;
-import android.location.Geocoder;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -29,7 +27,7 @@ public class MainActivity extends AppCompatActivity
     private Fragment Home;
     private AboutFragment aboutFragment;
     private Bundle b;
-
+    SharedPreferences pref;
     @Override
     protected void attachBaseContext(Context context) {
         super.attachBaseContext(context);
@@ -39,7 +37,15 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        Realm.init(this);
-
+        pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
+        b = new Bundle();
+        if(pref.getBoolean("need_address", true) == true){
+        } else {
+            Intent intent = new Intent(this, AlwaysRunActivity.class);
+            intent.putExtras(b);
+            startActivity(intent);
+            finish();
+        }
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -153,23 +159,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void clickAdapt(View v) {
-        SharedPreferences pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
-        b = new Bundle();
-        if(pref.getBoolean("activity_executed", false)){
-            Intent intent = new Intent(this, AlwaysRunActivity.class);
-            intent.putExtras(b);
-            startActivity(intent);
-            finish();
-        } else {
-            SharedPreferences.Editor ed = pref.edit();
-            ed.putBoolean("activity_executed", true);
-            ed.commit();
-        }
 
         if (isConnected()) {
             final Intent intent = new Intent(getApplicationContext(), AlwaysRunActivity.class);
             intent.putExtra("url", "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper");
             startActivity(intent);
+            SharedPreferences.Editor ed = pref.edit();
+            ed.putBoolean("activity_executed", true);
+            ed.commit();
             finish();
         } else {
             Toast toast = Toast.makeText(getApplicationContext(),"You are not conntected to the internet",Toast.LENGTH_LONG);
