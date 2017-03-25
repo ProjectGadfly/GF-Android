@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_main"
@@ -9,59 +9,47 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.gadfly.projectgadfly.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <ImageView
+        android:contentDescription="Logo"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/halfPage"
-        android:layout_weight="0.5">
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"
+        android:src="@drawable/gadfly1"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/logo"
+        android:layout_margin="14dp"/>
 
-        <ImageView
-            android:contentDescription="Logo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scaleType="fitXY"
-            android:adjustViewBounds="true"
-            android:src="@drawable/gadfly1"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/logo"
-            android:layout_margin="14dp"/>
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/halfPage2"
-        android:layout_weight="0.5">
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter address here."
         android:layout_centerInParent="true"
+        android:layout_below="@id/logo"
         android:imeOptions="actionDone"
         android:lines="1"
         android:id="@+id/addressfield"/>
-
-    <!--<Button-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_below="@+id/addressfield"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:text="SUBMIT"-->
-        <!--android:id="@+id/submitButton"-->
-        <!--android:onClick="clickAction"/>-->
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/addressfield"
         android:layout_centerHorizontal="true"
+        android:text="SUBMIT"
+        android:id="@+id/submitButton"
+        android:onClick="clickAction"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/submitButton"
+        android:layout_centerHorizontal="true"
         android:text="CHECK ADAPTER"
         android:id="@+id/adaptButton"
         android:onClick="clickAdapt"/>
-    </RelativeLayout>
-</LinearLayout>
+
+</RelativeLayout>

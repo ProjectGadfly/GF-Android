@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 
@@ -121,6 +122,12 @@ public class AlwaysRunActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, MainActivity.class);
+            Toast toast = Toast.makeText(this,"ajajaj",Toast.LENGTH_LONG);
+            toast.show();
+            SharedPreferences pref = getSharedPreferences("ActivityPREF", MainActivity.MODE_PRIVATE);
+            SharedPreferences.Editor ed = pref.edit();
+            ed.putBoolean("activity_executed", false);
+            ed.commit();
             startActivity(intent);
             finish();
             return true;
