@@ -1,6 +1,9 @@
 package com.example.gadfly.projectgadfly;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -35,11 +38,13 @@ public class AlwaysRunActivity extends AppCompatActivity
     private IntentIntegrator qrScan;
     BlankFragment alwaysRun;
     FragmentManager fragmentManager;
+    public static String PACKAGE_NAME;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_always_run);
+        PACKAGE_NAME = getApplicationContext().getPackageName();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         qrScan = new IntentIntegrator(this);
@@ -64,7 +69,13 @@ public class AlwaysRunActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         Bundle bundle = getIntent().getExtras();
-        String url = bundle.getString("url");
+        SharedPreferences pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
+        String url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
+        if(pref.getBoolean("activity_executed", false)){
+            url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
+        } else {
+            url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
+        }
         try {
             Object result = new JsonTask().execute(url).get();
         } catch (InterruptedException e) {
@@ -111,6 +122,9 @@ public class AlwaysRunActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
             return true;
         }
 
@@ -132,14 +146,14 @@ public class AlwaysRunActivity extends AppCompatActivity
         } else if (id == R.id.about) {
             fragmentManager
                     .beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_in_l, R.anim.slide_out_r)
+                    .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_out_l, R.anim.slide_in_r)
                     .replace(R.id.content_main, aboutFragment)
                     .addToBackStack(null)
                     .commit();
         } else if (id == R.id.team) {
             fragmentManager
                     .beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_in_l, R.anim.slide_out_r)
+                    .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_out_l, R.anim.slide_in_r)
                     .replace(R.id.content_main, team)
                     .addToBackStack(null)
                     .commit();

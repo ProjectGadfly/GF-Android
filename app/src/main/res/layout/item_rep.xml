@@ -6,8 +6,8 @@
 
         <ImageView
             android:id="@+id/photo_url"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:src="@drawable/person_outline"
             android:maxWidth="120dp"
             android:maxHeight="120dp"
@@ -68,7 +68,7 @@
         android:layout_alignParentBottom="true"
         android:id="@+id/callButton"
         android:layout_toRightOf="@+id/photo_url"
-        android:layout_below="@id/rep_name" />
+        android:layout_below="@id/rep_name"/>
 
 
     </RelativeLayout>

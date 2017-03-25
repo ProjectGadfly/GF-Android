@@ -2,6 +2,7 @@ package com.example.gadfly.projectgadfly;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.ConnectivityManager;
@@ -36,10 +37,24 @@ public class MainActivity extends AppCompatActivity
     Fragment Web;
     Fragment Rep;
     AboutFragment aboutFragment;
+    Bundle b;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
+        b = new Bundle();
+        if(pref.getBoolean("activity_executed", false)){
+            Intent intent = new Intent(this, AlwaysRunActivity.class);
+            intent.putExtras(b);
+            startActivity(intent);
+            finish();
+        } else {
+            SharedPreferences.Editor ed = pref.edit();
+            ed.putBoolean("activity_executed", true);
+            ed.commit();
+        }
+
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -206,7 +221,6 @@ public class MainActivity extends AppCompatActivity
                 getLocationFromAddress(address);
                 toast.show();
                 final Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                Bundle b = new Bundle();
                 b.putDouble("lat", LatAdd);
                 b.putDouble("lng", LngAdd);
                 intent.putExtras(b);
