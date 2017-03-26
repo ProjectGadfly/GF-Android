@@ -2,7 +2,6 @@ package com.example.gadfly.projectgadfly;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -68,8 +66,9 @@ public class AlwaysRunActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        Bundle bundle = getIntent().getExtras();
+        Bundle bundle = new Bundle();
         SharedPreferences pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
+        String text1 = pref.getString("address_field", "");
         String url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
         if(pref.getBoolean("activity_executed", false)){
             url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
@@ -84,6 +83,7 @@ public class AlwaysRunActivity extends AppCompatActivity
             e.printStackTrace();
         }
         bundle.putString("json", result1);
+        bundle.putString("address", text1);
         fragmentManager = getSupportFragmentManager();
 
         alwaysRun = new BlankFragment();

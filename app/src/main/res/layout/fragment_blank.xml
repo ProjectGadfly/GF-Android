@@ -3,12 +3,6 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/listView">
-    </ListView>
-
     <TextView
         android:textSize="30sp"
         android:layout_width="match_parent"
@@ -16,7 +10,11 @@
         android:id="@+id/jsonPlace"
         android:text="RAH"/>
 
-    <!--android:layout_marginTop="50dp"-->
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/listView">
+    </ListView>
 
 
 </LinearLayout>

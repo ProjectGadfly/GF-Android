@@ -2,12 +2,11 @@ package com.example.gadfly.projectgadfly;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,11 +71,11 @@ public class BlankFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_blank, container, false);
+        String text1 = getArguments().getString("address") + "textfromintent";
         String text = getArguments().getString("json");
-        Log.e("Errir", text.substring(0,20));
-        TextView t = (TextView) v.findViewById(R.id.jsonPlace);
-        t.setText(text);
-        String actualName = "";
+        String address = getArguments().getString("address");
+        Toast toast = Toast.makeText(getContext(),address,Toast.LENGTH_LONG);
+        toast.show();
         JSONArray jsonArray = null;
 
         try {
@@ -85,7 +84,6 @@ public class BlankFragment extends Fragment {
             e.printStackTrace();
         }
 
-        View button = inflater.inflate(R.layout.item_rep,container, false);
         ArrayList<Representatives> arrayOfUsers = new ArrayList<Representatives>();
 
         for (int i = 0; i<jsonArray.length(); i++) {

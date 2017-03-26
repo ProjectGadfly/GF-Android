@@ -2,11 +2,8 @@ package com.example.gadfly.projectgadfly;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,22 +47,6 @@ public class RepsAdapter extends ArrayAdapter<Representatives> {
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .override(120,120)
                 .into(Photo);
-
-        AsyncTask t = new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                String s = AlwaysRunActivity.PACKAGE_NAME;
-                PackageInfo p = null;
-                try {
-                    p = m.getPackageInfo(s, 0);
-                } catch (PackageManager.NameNotFoundException e) {
-                    e.printStackTrace();
-                }
-                s = p.applicationInfo.dataDir;
-                Log.e("Err", s);
-                return null;
-            }
-        };
 
         Button btn = (Button) convertView.findViewById(R.id.callButton);
         final TextView phoneNumber = (TextView) convertView.findViewById(R.id.phone);
