@@ -54,7 +54,7 @@ public class RepsAdapter extends ArrayAdapter<Representatives> {
         AsyncTask t = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                String s = AlwaysRunActivity.PACKAGE_NAME;
+                String s = LegislativeActivity.PACKAGE_NAME;
                 PackageInfo p = null;
                 try {
                     p = m.getPackageInfo(s, 0);
@@ -62,11 +62,12 @@ public class RepsAdapter extends ArrayAdapter<Representatives> {
                     e.printStackTrace();
                 }
                 s = p.applicationInfo.dataDir;
-                Log.e("Err", s);
                 return null;
             }
         };
 
+        //Passing the phone number to the call button and activate the
+        // call activity in response to the button
         Button btn = (Button) convertView.findViewById(R.id.callButton);
         final TextView phoneNumber = (TextView) convertView.findViewById(R.id.phone);
         phoneNumber.setText(user.phone_number);

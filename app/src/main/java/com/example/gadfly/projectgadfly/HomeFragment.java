@@ -9,6 +9,7 @@ import android.widget.EditText;
 
 /**
  * Created by papak on 3/22/2017.
+ * Create Home Fragment from the home_fragment xml layout in response to the Home button
  */
 
 public class HomeFragment extends Fragment {
@@ -18,14 +19,5 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.home_fragment, container, false);
         return v;
-    }
-    //    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        edit = getEdit(v);
-//        return v;
-//    }
-    public interface getText {
-        EditText getEdit(View v);
     }
 }

@@ -23,7 +23,7 @@ class Representatives {
         this.party = "STOCK";
     }
 
-    // For future development
+    // Constructor for future development with more fields for legislator
     Representatives(String name, String phone_number, String email, String district,
                     String state, String photo_url, String party) {
         this.name = name;
@@ -34,5 +34,4 @@ class Representatives {
         this.photo_url = photo_url;
         this.party = party;
     }
-
 }
