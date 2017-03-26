@@ -2,12 +2,12 @@ package com.example.gadfly.projectgadfly;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,8 +74,11 @@ public class LegislatorParsing extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_blank, container, false);
         String text = getArguments().getString("json");
+        String address = getArguments().getString("address");
+        Toast toast = Toast.makeText(getContext(), address, Toast.LENGTH_LONG);
+        toast.show();
         TextView t = (TextView) v.findViewById(R.id.jsonPlace);
-        t.setText(text);
+        t.setText(address);
         JSONArray jsonArray = null;
 
         try {

@@ -17,12 +17,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private EditText edit;
     private FragmentManager fragmentManager;
     private Fragment Home;
     private AboutFragment aboutFragment;
@@ -38,8 +37,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
         b = new Bundle();
-        if(pref.getBoolean("need_address", true) == true){
-        } else {
+        if(pref.getBoolean("have_address", false)) {
             Intent intent = new Intent(this, LegislativeActivity.class);
             intent.putExtras(b);
             startActivity(intent);
@@ -68,36 +66,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        edit = (EditText) Home.getView().findViewById(R.id.addressfield);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        edit = (EditText) Home.getView().findViewById(R.id.addressfield);
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        edit = (EditText) Home.getView().findViewById(R.id.addressfield);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        edit = (EditText) Home.getView().findViewById(R.id.addressfield);
-    }
-
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        edit = (EditText) Home.getView().findViewById(R.id.addressfield);
-    }
-    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -119,12 +87,12 @@ public class MainActivity extends AppCompatActivity
         //Handle the Home button
         if (id == R.id.homeView) {
             if (!fragmentManager.findFragmentByTag("HOMETAG").isVisible())
-            fragmentManager
-                    .beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_in_l, R.anim.slide_out_r)
-                    .replace(R.id.content_main, Home)
-                    .addToBackStack(null)
-                    .commit();
+                fragmentManager
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_in_l, R.anim.slide_out_r)
+                        .replace(R.id.content_main, Home)
+                        .addToBackStack(null)
+                        .commit();
             //Handle the About button
         } else if (id == R.id.about) {
             aboutFragment = new AboutFragment();
@@ -173,6 +141,23 @@ public class MainActivity extends AppCompatActivity
             finish();
         } else {
             Toast toast = Toast.makeText(getApplicationContext(),"You are not connected to the internet",Toast.LENGTH_LONG);
+            toast.show();
+        }
+    }
+    public void clickAction(View v) {
+        View parentView = v.getRootView();
+        TextView textView = (TextView) parentView.findViewById(R.id.addressfield);
+        String text = textView.getText().toString();
+        if (!text.isEmpty()) {
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString("address_field", text);
+            editor.putBoolean("have_address", true);
+            editor.commit();
+            Intent intent = new Intent(getApplicationContext(), LegislativeActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            Toast toast = Toast.makeText(getApplicationContext(), "Please enter an address", Toast.LENGTH_LONG);
             toast.show();
         }
     }

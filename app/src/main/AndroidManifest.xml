@@ -29,11 +29,8 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" />
-        <activity
-            android:name=".AlwaysRunActivity"
-            android:label="@string/title_activity_always_run"
+            android:name=".LegislativeActivity"
+            android:label="Your Representatives"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

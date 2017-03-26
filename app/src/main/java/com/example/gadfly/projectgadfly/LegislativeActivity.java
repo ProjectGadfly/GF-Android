@@ -1,4 +1,5 @@
 package com.example.gadfly.projectgadfly;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -17,7 +18,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
 import com.google.zxing.integration.android.IntentIntegrator;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,8 +70,9 @@ public class LegislativeActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Bundle bundle = getIntent().getExtras();
+        Bundle bundle = new Bundle();
         SharedPreferences pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
+        String text1 = pref.getString("address_field", "");
         String url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
         if(pref.getBoolean("activity_executed", false)){
             url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
@@ -83,6 +87,7 @@ public class LegislativeActivity extends AppCompatActivity
             e.printStackTrace();
         }
         bundle.putString("json", jsonString);
+        bundle.putString("address", text1);
         fragmentManager = getSupportFragmentManager();
 
         legislatorParsing = new LegislatorParsing();
