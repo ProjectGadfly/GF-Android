@@ -1,8 +1,6 @@
 package com.example.gadfly.projectgadfly;
-
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,17 +12,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
 import com.google.zxing.integration.android.IntentIntegrator;
-
-import org.json.JSONArray;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,40 +27,46 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
-public class AlwaysRunActivity extends AppCompatActivity
+public class LegislativeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private IntentIntegrator qrScan;
-    BlankFragment alwaysRun;
-    FragmentManager fragmentManager;
+    private LegislatorParsing legislatorParsing;
+    private FragmentManager fragmentManager;
     public static String PACKAGE_NAME;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_always_run);
+
+        //Set the layout of the activity based on legislator_activity layout
+        setContentView(R.layout.legislator_activity);
         PACKAGE_NAME = getApplicationContext().getPackageName();
+        //Set up the navigation bar of the activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //Set up the QR code scan in response to the scan button
         qrScan = new IntentIntegrator(this);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        //Set up the icon of the button
         fab.setImageResource(R.drawable.ic_scan_icon);
+        //Initiate scan activity
         fab.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 qrScan.initiateScan();
-    }
+            }
         });
-
+        //Set up the navigation bar
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
         Bundle bundle = getIntent().getExtras();
         SharedPreferences pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
         String url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
@@ -83,17 +82,15 @@ public class AlwaysRunActivity extends AppCompatActivity
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        bundle.putString("json", result1);
+        bundle.putString("json", jsonString);
         fragmentManager = getSupportFragmentManager();
 
-        alwaysRun = new BlankFragment();
-        alwaysRun.setArguments(bundle);
+        legislatorParsing = new LegislatorParsing();
+        legislatorParsing.setArguments(bundle);
 
         fragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_in_l, R.anim.slide_out_r)
-                .add(alwaysRun, "BLANK").replace(R.id.content_main, alwaysRun).commit();
-
-
+                .add(legislatorParsing, "BLANK").replace(R.id.content_main, legislatorParsing).commit();
     }
 
     @Override
@@ -109,7 +106,7 @@ public class AlwaysRunActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.always_run, menu);
+        getMenuInflater().inflate(R.menu.activity_main_drawer, menu);
         return true;
     }
 
@@ -120,13 +117,12 @@ public class AlwaysRunActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        //Set up alert dialog when clicking on the forget me button
         if (id == R.id.action_settings) {
             DialogFragment alertDialExample = new ForgetDialogFragment();
             alertDialExample.show(getSupportFragmentManager(), "AlertDialogFragment");
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -136,7 +132,6 @@ public class AlwaysRunActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         FragmentManager fragmentManager = getSupportFragmentManager();
         AboutFragment aboutFragment = new AboutFragment();
-//        HomeFragment Home = new HomeFragment();
         TeamFragment team = new TeamFragment();
         int id = item.getItemId();
 
@@ -164,44 +159,38 @@ public class AlwaysRunActivity extends AppCompatActivity
 
 
 
-    ProgressDialog pd;
-    JSONArray jsonA;
-    String result1;
-
+    private ProgressDialog progressDialog;
+    private String jsonString;
+    /**
+     * Parsing Json AsyncTask
+     */
     private class JsonTask extends AsyncTask<String, String, String> {
-
-
         protected void onPreExecute() {
             super.onPreExecute();
-            pd = new ProgressDialog(AlwaysRunActivity.this);
-            pd.setMessage("Please wait");
-            pd.setCancelable(false);
-            pd.show();
+            progressDialog = new ProgressDialog(LegislativeActivity.this);
+            //Create a dialog when waiting for the activity to execute
+            progressDialog.setMessage("Please wait");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
         }
 
         protected String doInBackground(String... params) {
             HttpURLConnection connection = null;
             BufferedReader reader = null;
-
             try {
                 URL url = new URL(params[0]);
                 connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
-
-
                 InputStream stream = connection.getInputStream();
-
                 reader = new BufferedReader(new InputStreamReader(stream));
-
                 StringBuffer buffer = new StringBuffer();
                 String line = "";
 
                 while ((line = reader.readLine()) != null) {
                     buffer.append(line);
                 }
-
-                result1 = buffer.toString();
-                return result1;
+                jsonString = buffer.toString();
+                return jsonString;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -224,8 +213,8 @@ public class AlwaysRunActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            if (pd.isShowing()){
-                pd.dismiss();
+            if (progressDialog.isShowing()){
+                progressDialog.dismiss();
             }
         }
     }

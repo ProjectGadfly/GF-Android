@@ -19,12 +19,12 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {atsymbol link BlankFragment.OnFragmentInteractionListener} interface
+ * {atsymbol link LegislatorParsing.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link BlankFragment#newInstance} factory method to
+ * Use the {@link LegislatorParsing#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BlankFragment extends Fragment {
+public class LegislatorParsing extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -36,7 +36,7 @@ public class BlankFragment extends Fragment {
 
 
 
-    public BlankFragment() {
+    public LegislatorParsing() {
         // Required empty public constructor
     }
 
@@ -46,11 +46,11 @@ public class BlankFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment BlankFragment.
+     * @return A new instance of fragment LegislatorParsing.
      */
     // TODO: Rename and change types and number of parameters
-    public static BlankFragment newInstance(String param1, String param2) {
-        BlankFragment fragment = new BlankFragment();
+    public static LegislatorParsing newInstance(String param1, String param2) {
+        LegislatorParsing fragment = new LegislatorParsing();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -67,16 +67,15 @@ public class BlankFragment extends Fragment {
         }
     }
 
+    //Create
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_blank, container, false);
         String text = getArguments().getString("json");
-        Log.e("Errir", text.substring(0,20));
         TextView t = (TextView) v.findViewById(R.id.jsonPlace);
         t.setText(text);
-        String actualName = "";
         JSONArray jsonArray = null;
 
         try {
@@ -85,16 +84,16 @@ public class BlankFragment extends Fragment {
             e.printStackTrace();
         }
 
-        View button = inflater.inflate(R.layout.item_rep,container, false);
         ArrayList<Representatives> arrayOfUsers = new ArrayList<Representatives>();
 
-        for (int i = 0; i<jsonArray.length(); i++) {
+        for (int i = 0; i < jsonArray.length(); i++) {
 
             try {
                 JSONObject j = jsonArray.getJSONObject(i);
                 JSONArray officeA = j.getJSONArray("offices");
                 JSONObject office = officeA.getJSONObject(0);
-                arrayOfUsers.add(new Representatives(j.getString("full_name"),office.getString("phone"), j.getString("photo_url")));
+                arrayOfUsers.add(new Representatives(j.getString("full_name"),
+                        office.getString("phone"), j.getString("photo_url")));
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -134,16 +133,6 @@ public class BlankFragment extends Fragment {
 //        mListener = null;
 //    }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
 //    public interface OnFragmentInteractionListener {
 //        // TODO: Update argument type and name
 //        void onFragmentInteraction(Uri uri);

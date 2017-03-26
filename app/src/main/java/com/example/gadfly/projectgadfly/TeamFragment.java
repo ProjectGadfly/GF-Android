@@ -7,14 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-/**
- * A simple {link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * { link TeamFragment. OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link TeamFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class TeamFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -25,7 +17,6 @@ public class TeamFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-//    private OnFragmentInteractionListener mListener;
 
     public TeamFragment() {
         // Required empty public constructor
@@ -58,6 +49,7 @@ public class TeamFragment extends Fragment {
         }
     }
 
+    // Create a fragment as a response to a team button
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

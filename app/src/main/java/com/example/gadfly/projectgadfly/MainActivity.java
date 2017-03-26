@@ -36,12 +36,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        Realm.init(this);
         pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
         b = new Bundle();
         if(pref.getBoolean("need_address", true) == true){
         } else {
-            Intent intent = new Intent(this, AlwaysRunActivity.class);
+            Intent intent = new Intent(this, LegislativeActivity.class);
             intent.putExtras(b);
             startActivity(intent);
             finish();
@@ -117,8 +116,8 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         aboutFragment = new AboutFragment();
         TeamFragment team = new TeamFragment();
+        //Handle the Home button
         if (id == R.id.homeView) {
-            // Handle the camera action
             if (!fragmentManager.findFragmentByTag("HOMETAG").isVisible())
             fragmentManager
                     .beginTransaction()
@@ -126,8 +125,9 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.content_main, Home)
                     .addToBackStack(null)
                     .commit();
+            //Handle the About button
         } else if (id == R.id.about) {
-                aboutFragment = new AboutFragment();
+            aboutFragment = new AboutFragment();
             fragmentManager
                     .beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_in_l, R.anim.slide_out_r)
@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.content_main, aboutFragment)
                     .addToBackStack(null)
                     .commit();
+            //Handle the Team button
         } else if (id == R.id.team) {
             fragmentManager
                     .beginTransaction()
@@ -148,20 +149,22 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    // Checks if the user is connected to the internet, returns false if not
     public boolean isConnected() {
         ConnectivityManager cm =
                 (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
         return isConnected;
     }
 
+    //Setting the response after clicking the Legislator Adapter button
+    //If the user is not connected to the Internet, a warning message
     public void clickAdapt(View v) {
-
         if (isConnected()) {
-            final Intent intent = new Intent(getApplicationContext(), AlwaysRunActivity.class);
+            final Intent intent = new Intent(getApplicationContext(), LegislativeActivity.class);
+            //Put in test JSON url
             intent.putExtra("url", "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper");
             startActivity(intent);
             SharedPreferences.Editor ed = pref.edit();
@@ -169,9 +172,8 @@ public class MainActivity extends AppCompatActivity
             ed.commit();
             finish();
         } else {
-            Toast toast = Toast.makeText(getApplicationContext(),"You are not conntected to the internet",Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(getApplicationContext(),"You are not connected to the internet",Toast.LENGTH_LONG);
             toast.show();
         }
-
     }
 }
