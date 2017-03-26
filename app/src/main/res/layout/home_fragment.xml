@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="0.5"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
             android:adjustViewBounds="true"
             android:src="@drawable/gadfly1"
             android:layout_gravity="center_horizontal"
@@ -46,14 +46,6 @@
             android:text="SUBMIT"
             android:id="@+id/submitButton"
             android:onClick="clickAction"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="CHECK ADAPTER"
-            android:id="@+id/adaptButton"
-            android:onClick="clickAdapt"/>
 
     </LinearLayout>
 
