@@ -2,6 +2,7 @@ package com.example.gadfly.projectgadfly;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,8 +19,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,6 +40,7 @@ public class LegislativeActivity extends AppCompatActivity
     private LegislatorParsing legislatorParsing;
     private FragmentManager fragmentManager;
     public static String PACKAGE_NAME;
+    SharedPreferences pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,11 @@ public class LegislativeActivity extends AppCompatActivity
 
         //Set the layout of the activity based on legislator_activity layout
         setContentView(R.layout.legislator_activity);
+        fragmentManager = getSupportFragmentManager();
+
+        pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
+
+
         PACKAGE_NAME = getApplicationContext().getPackageName();
         //Set up the navigation bar of the activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -88,7 +97,6 @@ public class LegislativeActivity extends AppCompatActivity
         }
         bundle.putString("json", jsonString);
         bundle.putString("address", text1);
-        fragmentManager = getSupportFragmentManager();
 
         legislatorParsing = new LegislatorParsing();
         legislatorParsing.setArguments(bundle);
@@ -105,6 +113,34 @@ public class LegislativeActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+        if (scanningResult != null) {
+
+            String scanFormat = scanningResult.getFormatName();
+            String scanContent = scanningResult.getContents();
+            if (scanContent != null) {
+                ScanResult scanResult = new ScanResult();
+                Bundle bundle = new Bundle();
+                bundle.putString("scanFormat", scanFormat);
+                bundle.putString("scanContent", scanContent);
+                scanResult.setArguments(bundle);
+
+                fragmentManager
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_in_l, R.anim.slide_out_r)
+                        .add(scanResult, "SCANPAGE")
+                        .replace(R.id.content_main, scanResult)
+                        .addToBackStack(null)
+                        .commitAllowingStateLoss();
+            }
+        } else {
+            Toast toast = Toast.makeText(getApplicationContext(), "No data", Toast.LENGTH_LONG);
+            toast.show();
         }
     }
 
