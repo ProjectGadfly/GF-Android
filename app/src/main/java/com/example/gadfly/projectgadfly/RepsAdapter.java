@@ -37,7 +37,6 @@ public class RepsAdapter extends ArrayAdapter<Representatives> {
         final TextView Name = (TextView) convertView.findViewById(R.id.rep_name);
         ImageView Photo = (ImageView) convertView.findViewById(R.id.photo_url);
         // Populate the data into the template view using the data object
-        Context context = getContext();
         Name.setText(user.name);
         Glide.with(getContext())
                 .load(user.photo_url)

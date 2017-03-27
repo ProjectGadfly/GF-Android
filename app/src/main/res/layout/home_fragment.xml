@@ -24,7 +24,7 @@
             android:layout_weight="0.5">
 
             <ImageView
-                android:contentDescription="Logo"
+                android:contentDescription="@string/logo_content_description"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="fitCenter"
@@ -44,7 +44,7 @@
                 android:id="@+id/places_autocomplete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter your address."
+                android:hint="@string/enter_address_hint"
                 android:focusable="true"
                 app:pacv_googleMapsApiKey="@string/google_maps_key"
                 android:layout_centerHorizontal="true" />
@@ -53,7 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="SUBMIT"
+                android:text="@string/submit_button"
                 android:id="@+id/submitButton"
                 android:onClick="clickAction"
                 android:layout_centerHorizontal="true"

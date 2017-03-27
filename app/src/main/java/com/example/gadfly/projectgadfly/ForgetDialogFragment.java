@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.widget.Toast;
 
 public class ForgetDialogFragment extends DialogFragment {
 
@@ -16,8 +15,8 @@ public class ForgetDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity())
                 // Set title and message of the Dialog
-                .setTitle("Alert Dialog")
-                .setMessage("Are you sure you want to delete old address entry?")
+                .setTitle("Forget Me")
+                .setMessage("This will delete your stored address. Do you wish to continue?")
                 //Set OK button response
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener(){
 
@@ -35,9 +34,7 @@ public class ForgetDialogFragment extends DialogFragment {
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener(){
 
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getActivity(), "Canceled", Toast.LENGTH_SHORT).show();
-                    }});
+                    public void onClick(DialogInterface dialog, int which) {}});
 
         return alertDialogBuilder.create();
     }
