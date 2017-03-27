@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity
     private Fragment Home;
     private AboutFragment aboutFragment;
     private Bundle b;
-    SharedPreferences pref;
+    private SharedPreferences pref;
     @Override
     protected void attachBaseContext(Context context) {
         super.attachBaseContext(context);
@@ -119,13 +119,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     // Checks if the user is connected to the internet, returns false if not
-    public boolean isConnected() {
+    private boolean isConnected() {
         ConnectivityManager cm =
                 (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
+        return activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
-        return isConnected;
     }
 
     //Setting the response after clicking the Legislator Adapter button
@@ -138,7 +137,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
             SharedPreferences.Editor ed = pref.edit();
             ed.putBoolean("activity_executed", true);
-            ed.commit();
+            ed.apply();
             finish();
         } else {
             Toast toast = Toast.makeText(getApplicationContext(),"You are not connected to the internet",Toast.LENGTH_LONG);
@@ -153,7 +152,7 @@ public class MainActivity extends AppCompatActivity
             SharedPreferences.Editor editor = pref.edit();
             editor.putString("address_field", text);
             editor.putBoolean("have_address", true);
-            editor.commit();
+            editor.apply();
             Intent intent = new Intent(getApplicationContext(), LegislativeActivity.class);
             startActivity(intent);
             finish();

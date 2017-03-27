@@ -2,7 +2,6 @@ package com.example.gadfly.projectgadfly;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +38,6 @@ public class RepsAdapter extends ArrayAdapter<Representatives> {
         ImageView Photo = (ImageView) convertView.findViewById(R.id.photo_url);
         // Populate the data into the template view using the data object
         Context context = getContext();
-        final PackageManager m = context.getPackageManager();
         Name.setText(user.name);
         Glide.with(getContext())
                 .load(user.photo_url)

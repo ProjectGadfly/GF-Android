@@ -39,7 +39,6 @@ public class LegislativeActivity extends AppCompatActivity
     private IntentIntegrator qrScan;
     private LegislatorParsing legislatorParsing;
     private FragmentManager fragmentManager;
-    public static String PACKAGE_NAME;
     SharedPreferences pref;
 
     @Override
@@ -53,7 +52,6 @@ public class LegislativeActivity extends AppCompatActivity
         pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
 
 
-        PACKAGE_NAME = getApplicationContext().getPackageName();
         //Set up the navigation bar of the activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -224,13 +222,13 @@ public class LegislativeActivity extends AppCompatActivity
                 connection.connect();
                 InputStream stream = connection.getInputStream();
                 reader = new BufferedReader(new InputStreamReader(stream));
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder builder = new StringBuilder();
                 String line = "";
 
                 while ((line = reader.readLine()) != null) {
-                    buffer.append(line);
+                    builder.append(line);
                 }
-                jsonString = buffer.toString();
+                jsonString = builder.toString();
                 return jsonString;
             } catch (MalformedURLException e) {
                 e.printStackTrace();

@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 /**
  * Created by papak on 3/22/2017.
@@ -13,8 +12,7 @@ import android.widget.EditText;
  */
 
 public class HomeFragment extends Fragment {
-    public View v;
-    public EditText edit;
+    private View v;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.home_fragment, container, false);
