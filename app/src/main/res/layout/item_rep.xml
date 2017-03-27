@@ -68,7 +68,8 @@
         android:layout_alignParentBottom="true"
         android:id="@+id/callButton"
         android:layout_toRightOf="@+id/photo_url"
-        android:layout_below="@id/rep_name"/>
+        android:layout_below="@id/rep_name"
+        />
 
 
     </RelativeLayout>
