@@ -18,34 +18,47 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <ImageView
-            android:contentDescription="Logo"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="0.5"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true"
-            android:src="@drawable/gadfly1"
-            android:layout_gravity="center_horizontal"
-            android:id="@+id/logo"
-            android:layout_margin="14dp"/>
-
-        <EditText
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter address here."
-            android:layout_gravity="center_horizontal"
-            android:imeOptions="actionDone"
-            android:lines="1"
-            android:id="@+id/addressfield"/>
+            android:layout_height="0dp"
+            android:layout_weight="0.5">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="SUBMIT"
-            android:id="@+id/submitButton"
-            android:onClick="clickAction" />
+            <ImageView
+                android:contentDescription="Logo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:src="@drawable/gadfly1"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/logo"
+                android:layout_margin="14dp"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5">
+
+            <com.seatgeek.placesautocomplete.PlacesAutocompleteTextView
+                android:id="@+id/places_autocomplete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your address."
+                app:pacv_googleMapsApiKey="@string/google_maps_key"
+                android:layout_centerHorizontal="true"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="SUBMIT"
+                android:id="@+id/submitButton"
+                android:onClick="clickAction"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/places_autocomplete"/>
+
+        </RelativeLayout>
 
     </LinearLayout>
 
