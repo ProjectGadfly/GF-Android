@@ -9,6 +9,14 @@
     <string name="submit_button">Submit</string>
     <string name="title_activity_maps">Map</string>
     <string name="invalid_address">Invalid Address</string>
+    <string name="forget_button">Forget Me</string>
+    <string name="rep_content_description">Representative Image</string>
+    <string name="drawer_about_us">About Us</string>
+    <string name="drawer_team">Team</string>
+    <string name="drawer_home">Home</string>
+    <string name="gadfly_email">projectgadfly1@gmail.com</string>
+    <string name="call_button">CALL</string>
+    <string name="about_us">Project Gadfly is a team of Grinnell students, alum and other volunteers who recognized that in our current political climate, the ability to identify and contact local representatives could do a lot of good.</string>
     <string name="no_internet">There was a problem communicating with the server. Is your device online?</string>
     <string name="ask_for_address">Please enter an address.</string>
     <string name="logo_content_description">Gadfly Logo</string>

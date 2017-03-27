@@ -6,14 +6,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:text="ABOUT US"
+        android:text="@string/drawer_about_us"
         android:id="@+id/abouttitle"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/abouttitle"
-        android:text="BLAG BLAJ VLAG"
+        android:text="@string/about_us"
         android:textSize="15sp"/>
 
 </RelativeLayout>
