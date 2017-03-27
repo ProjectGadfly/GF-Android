@@ -17,8 +17,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.seatgeek.placesautocomplete.PlacesAutocompleteTextView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -146,8 +147,8 @@ public class MainActivity extends AppCompatActivity
     }
     public void clickAction(View v) {
         View parentView = v.getRootView();
-        TextView textView = (TextView) parentView.findViewById(R.id.addressfield);
-        String text = textView.getText().toString();
+        PlacesAutocompleteTextView placesTextView = (PlacesAutocompleteTextView) parentView.findViewById(R.id.places_autocomplete);
+        String text = placesTextView.getText().toString();
         if (!text.isEmpty()) {
             SharedPreferences.Editor editor = pref.edit();
             editor.putString("address_field", text);
