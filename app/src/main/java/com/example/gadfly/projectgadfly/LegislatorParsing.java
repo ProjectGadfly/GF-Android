@@ -84,7 +84,7 @@ public class LegislatorParsing extends Fragment {
             e.printStackTrace();
         }
 
-        ArrayList<Representatives> arrayOfUsers = new ArrayList<Representatives>();
+        ArrayList<Representatives> arrayOfUsers = new ArrayList<>();
 
         for (int i = 0; i < jsonArray.length(); i++) {
 
