@@ -66,6 +66,7 @@ public class LegislatorParsing extends Fragment {
         }
     }
 
+    ArrayList<Representatives> arrayOfUsers;
     //Create
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -84,7 +85,7 @@ public class LegislatorParsing extends Fragment {
             e.printStackTrace();
         }
 
-        ArrayList<Representatives> arrayOfUsers = new ArrayList<>();
+        arrayOfUsers = new ArrayList<>();
 
         for (int i = 0; i < jsonArray.length(); i++) {
 

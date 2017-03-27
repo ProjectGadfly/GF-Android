@@ -9,7 +9,7 @@
     <string name="submit_button">Submit</string>
     <string name="title_activity_maps">Map</string>
     <string name="invalid_address">Invalid Address</string>
-    <string name="no_internet">You are not connected to the internet.</string>
+    <string name="no_internet">There was a problem communicating with the server. Is your device online?</string>
     <string name="ask_for_address">Please enter an address.</string>
     <string name="logo_content_description">Gadfly Logo</string>
     <string name="enter_address_hint">Enter address here.</string>
@@ -18,4 +18,23 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_welcome">Home Screen</string>
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
+
+    <string name="slide_1_title">Project Gadfly</string>
+    <string name="slide_1_desc">The easiest way to contact your state and federal representatives.</string>
+
+    <string name="slide_2_title">Convenient</string>
+    <string name="slide_2_desc">We find and display the contact info of your representatives in one place.</string>
+
+    <string name="slide_3_title">Call Scripts</string>
+    <string name="slide_3_desc">Scan a QR code and you will get a call script to make calling your rep easier than ever!</string>
+
+    <string name="slide_4_title">Simplicity</string>
+    <string name="slide_4_desc">No ads or unnecessary content! Just enter you address and you\'re good to go!</string>
+
+    <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
+    <string name="play_again">Play Again</string>
 </resources>

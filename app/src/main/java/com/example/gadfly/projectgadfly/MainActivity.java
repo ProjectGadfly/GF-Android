@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.multidex.MultiDex;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -135,9 +136,6 @@ public class MainActivity extends AppCompatActivity
             //Put in test JSON url
             intent.putExtra("url", "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper");
             startActivity(intent);
-            SharedPreferences.Editor ed = pref.edit();
-            ed.putBoolean("activity_executed", true);
-            ed.apply();
             finish();
         } else {
             Toast toast = Toast.makeText(getApplicationContext(),"You are not connected to the internet",Toast.LENGTH_LONG);
@@ -148,17 +146,27 @@ public class MainActivity extends AppCompatActivity
         View parentView = v.getRootView();
         PlacesAutocompleteTextView placesTextView = (PlacesAutocompleteTextView) parentView.findViewById(R.id.places_autocomplete);
         String text = placesTextView.getText().toString();
-        if (!text.isEmpty()) {
+        text = text.replaceAll(" ", "+");
+        if (!text.isEmpty() && isConnected()) {
             SharedPreferences.Editor editor = pref.edit();
             editor.putString("address_field", text);
             editor.putBoolean("have_address", true);
             editor.apply();
             Intent intent = new Intent(getApplicationContext(), LegislativeActivity.class);
+            intent.putExtra("url", "https://ourapi/" + text);
             startActivity(intent);
             finish();
         } else {
-            Toast toast = Toast.makeText(getApplicationContext(), "Please enter an address", Toast.LENGTH_LONG);
-            toast.show();
+            if (text.isEmpty()) {
+                Snackbar.make(parentView, R.string.ask_for_address, Snackbar.LENGTH_LONG)
+                        .show();
+            }
+            if (!isConnected()) {
+                Toast toast = Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_LONG);
+                toast.show();
+                Snackbar.make(parentView, R.string.no_internet, Snackbar.LENGTH_LONG)
+                        .show();
+            }
         }
     }
 }

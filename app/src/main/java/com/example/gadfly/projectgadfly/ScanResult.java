@@ -72,6 +72,7 @@ public class ScanResult extends Fragment {
         } else {
             getFragmentManager().popBackStackImmediate();
         }
+
         return view;
 
     }
