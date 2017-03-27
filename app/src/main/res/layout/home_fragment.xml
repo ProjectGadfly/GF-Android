@@ -56,7 +56,8 @@
                 android:id="@+id/submitButton"
                 android:onClick="clickAction"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@+id/places_autocomplete"/>
+                android:layout_below="@+id/places_autocomplete"
+                style="?android:attr/borderlessButtonStyle"/>
 
         </RelativeLayout>
 
