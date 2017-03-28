@@ -26,6 +26,7 @@ public class ForgetDialogFragment extends DialogFragment {
                         SharedPreferences pref = getContext().getSharedPreferences("ActivityPREF", MainActivity.MODE_PRIVATE);
                         SharedPreferences.Editor ed = pref.edit();
                         ed.putBoolean("have_address", false);
+                        ed.remove("json");
                         ed.apply();
                         startActivity(intent);
                         getActivity().finish();
