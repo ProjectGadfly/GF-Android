@@ -10,13 +10,16 @@
         android:icon="@mipmap/gadfly"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        >
         <activity
             android:name=".Introduction"
+
             android:theme="@style/Theme.AppCompat.NoActionBar">
         </activity>
         <activity
             android:name=".MainActivity"
+
             android:configChanges="keyboardHidden|orientation|screenLayout|screenSize"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -29,12 +32,24 @@
             android:name=".LegislativeActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|screenSize"
             android:label="Your Representatives"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- URI tutsplus://deeplink -->
+                <data android:scheme="projectgadfly" android:host="idk"/>
+                <!-- URI http://www.mydeeplink.com -->
+                <data android:scheme="http" android:host="www.projectgadfly.com"/>
+            </intent-filter>
+            </activity>
+
+
         <activity android:name=".SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
