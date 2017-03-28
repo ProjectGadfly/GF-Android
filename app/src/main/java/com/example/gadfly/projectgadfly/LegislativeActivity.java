@@ -183,6 +183,12 @@ public class LegislativeActivity extends AppCompatActivity
             DialogFragment alertDialExample = new ForgetDialogFragment();
             alertDialExample.show(getSupportFragmentManager(), "AlertDialogFragment");
             return true;
+        } else if (id == R.id.action_tutorial) {
+            Intent intent = new Intent(getApplicationContext(), Introduction.class);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putBoolean("not_first_run", false);
+            editor.apply();
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }

@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity
         View parentView = v.getRootView();
         PlacesAutocompleteTextView placesTextView = (PlacesAutocompleteTextView) parentView.findViewById(R.id.places_autocomplete);
         String text = placesTextView.getText().toString();
+        View contentView = this.findViewById(android.R.id.content);
         text = text.replaceAll(" ", "+");
         if (!text.isEmpty() && isConnected()) {
             SharedPreferences.Editor editor = pref.edit();
@@ -154,13 +155,13 @@ public class MainActivity extends AppCompatActivity
             finish();
         } else {
             if (text.isEmpty()) {
-                Snackbar.make(parentView, R.string.ask_for_address, Snackbar.LENGTH_LONG)
+                Snackbar.make(contentView, R.string.ask_for_address, Snackbar.LENGTH_LONG)
                         .show();
             }
             if (!isConnected()) {
                 Toast toast = Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_LONG);
                 toast.show();
-                Snackbar.make(parentView, R.string.no_internet, Snackbar.LENGTH_LONG)
+                Snackbar.make(contentView, R.string.no_internet, Snackbar.LENGTH_LONG)
                         .show();
             }
         }
