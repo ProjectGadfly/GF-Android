@@ -7,10 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+
 
 
 /**
@@ -73,13 +71,10 @@ public class ScanResult extends Fragment {
         TextView scanResultView = (TextView) view.findViewById(R.id.scanResultTxtV);
         ListView listView = (ListView) view.findViewById(R.id.resultList);
 
-        ArrayList<Representatives> arrayOfUsers = new ArrayList<Representatives>();
+      ArrayList<Representatives> arrayOfUsers = new ArrayList<Representatives>();
         arrayOfUsers = DataHolder.getInstance().getData();
-        //arrayOfUsers.add(0, new Representatives( "Linh Pham", "31242", "dsfds"));
-
-        RepsAdapter adapter = new RepsAdapter(getActivity(), arrayOfUsers);
-        listView.setAdapter(adapter);
-
+        RepsAdapter repsAdapter = new RepsAdapter(getActivity(), arrayOfUsers);
+        listView.setAdapter(repsAdapter);
         if (getArguments()!= null) {
             scanFormatView.setText(getArguments().getString("scanFormat"));
             scanResultView.setText(getArguments().getString("scanContent"));

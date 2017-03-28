@@ -102,7 +102,6 @@ public class LegislatorParsing extends Fragment {
         }
 
         DataHolder.getInstance().setData(arrayOfUsers);
-        ScanResult scanResult = new ScanResult();
         // Create the adapter to convert the array to views
         RepsAdapter adapter = new RepsAdapter(getActivity(), arrayOfUsers);
 
