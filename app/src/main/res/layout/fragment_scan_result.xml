@@ -16,6 +16,10 @@
         android:layout_height="wrap_content"
         android:id="@+id/scanResultTxtV"
         android:text=""/>
-    <include layout="@layout/fragment_blank"/>
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/resultList">
+    </ListView>
 
 </LinearLayout>
