@@ -5,18 +5,18 @@
 
         <item
             android:id="@+id/homeView"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Home" />
+            android:icon="@drawable/ic_home_icon"
+            android:title="@string/drawer_home" />
 
         <item
             android:id="@+id/about"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="About Us" />
+            android:icon="@drawable/ic_about_us"
+            android:title="@string/drawer_about_us" />
 
         <item
             android:id="@+id/team"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Team" />
+            android:icon="@drawable/ic_team"
+            android:title="@string/drawer_team" />
 
     </group>
 
