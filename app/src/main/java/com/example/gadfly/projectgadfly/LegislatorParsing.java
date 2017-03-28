@@ -138,3 +138,10 @@ public class LegislatorParsing extends Fragment {
 //        void onFragmentInteraction(Uri uri);
 //    }
 }
+class DataHolder {
+    private ArrayList<Representatives> data;
+    public ArrayList<Representatives> getData() {return data;}
+    public void setData(ArrayList<Representatives> data) {this.data = data;}
+    private static final DataHolder holder = new DataHolder();
+    public static DataHolder getInstance() {return holder;}
+}
