@@ -93,21 +93,26 @@ public class LegislativeActivity extends AppCompatActivity
         SharedPreferences pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
 
         String url;
-        if(pref.getBoolean("have_address", false)){
-            url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
+        if (pref.getString("json", "").equalsIgnoreCase("")) {
+            if (pref.getBoolean("have_address", false)) {
+                url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
 //            url = pref.getString("address_field", "");
-        } else {
-            url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
-            //Error should never get here
+            } else {
+                url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
+                //Error should never get here
+            }
+            try {
+                Object result = new JsonTask().execute(url).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString("json", jsonString);
+            editor.apply();
         }
-        try {
-            Object result = new JsonTask().execute(url).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        bundle.putString("json", jsonString);
+        bundle.putString("json", pref.getString("json", ""));
         bundle.putString("address", pref.getString("address_field", ""));
 
         legislatorParsing = new LegislatorParsing();

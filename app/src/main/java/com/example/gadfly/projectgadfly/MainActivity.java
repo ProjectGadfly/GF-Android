@@ -72,8 +72,9 @@ public class MainActivity extends AppCompatActivity
         fragmentManager = getSupportFragmentManager();
         Home = new HomeFragment();
         fragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_in_l, R.anim.slide_out_r)
-                .add(Home, "HOMETAG").replace(R.id.content_main, Home).commit();
+                .add(Home, "HOMETAG")
+                .replace(R.id.content_main, Home)
+                .commit();
 
     }
 
@@ -101,7 +102,6 @@ public class MainActivity extends AppCompatActivity
             if (!fragmentManager.findFragmentByTag("HOMETAG").isVisible())
                 fragmentManager
                         .beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_in_l, R.anim.slide_out_r)
                         .replace(R.id.content_main, Home)
                         .addToBackStack(null)
                         .commit();
@@ -110,7 +110,6 @@ public class MainActivity extends AppCompatActivity
             aboutFragment = new AboutFragment();
             fragmentManager
                     .beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_in_l, R.anim.slide_out_r)
                     .add(aboutFragment, "ABOUTTAG")
                     .replace(R.id.content_main, aboutFragment)
                     .addToBackStack(null)
@@ -119,7 +118,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.team) {
             fragmentManager
                     .beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_in_l, R.anim.slide_out_r)
                     .replace(R.id.content_main, team)
                     .addToBackStack(null)
                     .commit();

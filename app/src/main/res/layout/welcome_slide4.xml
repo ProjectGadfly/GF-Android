@@ -17,7 +17,7 @@
         <ImageView
             android:layout_width="@dimen/img_width_height"
             android:layout_height="@dimen/img_width_height"
-            android:src="@drawable/ic_yin_yang" />
+            android:src="@drawable/ic_simplicity" />
 
         <TextView
             android:layout_width="wrap_content"
