@@ -12,7 +12,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -149,7 +148,6 @@ public class LegislativeActivity extends AppCompatActivity
                 bundle.putString("scanContent", scanContent);
                 scanResult.setArguments(bundle);
 
-
                 fragmentManager
                         .beginTransaction()
                         .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_in_l, R.anim.slide_out_r)
@@ -203,18 +201,20 @@ public class LegislativeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.homeView) {
-
+            fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.content_main, legislatorParsing)
+                    .addToBackStack(null)
+                    .commit();
         } else if (id == R.id.about) {
             fragmentManager
                     .beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_out_l, R.anim.slide_in_r)
                     .replace(R.id.content_main, aboutFragment)
                     .addToBackStack(null)
                     .commit();
         } else if (id == R.id.team) {
             fragmentManager
                     .beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_out_l, R.anim.slide_in_r)
                     .replace(R.id.content_main, team)
                     .addToBackStack(null)
                     .commit();
