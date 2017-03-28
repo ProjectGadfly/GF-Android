@@ -5,7 +5,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 
 /**
@@ -66,6 +69,11 @@ public class ScanResult extends Fragment {
         View view = inflater.inflate(R.layout.fragment_scan_result, container, false);
         TextView scanFormatView = (TextView) view.findViewById(R.id.scanFormatTxtV);
         TextView scanResultView = (TextView) view.findViewById(R.id.scanResultTxtV);
+        ListView listView = (ListView) view.findViewById(R.id.resultList);
+        ArrayList<Representatives> arrayOfUsers = new ArrayList<Representatives>();
+        arrayOfUsers = DataHolder.getInstance().getData();
+        RepsAdapter repsAdapter = new RepsAdapter(getActivity(), arrayOfUsers);
+        listView.setAdapter(repsAdapter);
         if (getArguments()!= null) {
             scanFormatView.setText(getArguments().getString("scanFormat"));
             scanResultView.setText(getArguments().getString("scanContent"));
