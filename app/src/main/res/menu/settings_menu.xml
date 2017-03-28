@@ -6,9 +6,5 @@
         android:orderInCategory="100"
         android:title="@string/forget_button"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/action_tutorial"
-        android:title="Tutorial"
-        android:orderInCategory="123"
-        app:showAsAction="never" />
+
 </menu>
