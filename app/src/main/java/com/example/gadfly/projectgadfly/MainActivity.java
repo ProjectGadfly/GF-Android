@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -136,15 +137,25 @@ public class MainActivity extends AppCompatActivity
                 activeNetwork.isConnectedOrConnecting();
     }
 
+
+    public boolean isAddressInUS(String location) {
+        if (!(location.contains("united+states") || location.contains("United+States"))) {
+            Snackbar.make(getWindow().findViewById(R.id.content_main), "Please enter an address in the United States", Snackbar.LENGTH_LONG)
+                    .show();
+            return false;
+        }
+        return true;
+    }
+
     //Setting the response after clicking the Legislator Adapter button
     //If the user is not connected to the Internet, a warning message
     public void clickAction(View v) {
         View parentView = v.getRootView();
         PlacesAutocompleteTextView placesTextView = (PlacesAutocompleteTextView) parentView.findViewById(R.id.places_autocomplete);
         String text = placesTextView.getText().toString();
-        View contentView = this.findViewById(android.R.id.content);
+        View contentView = getWindow().findViewById(R.id.content_main);
         text = text.replaceAll(" ", "+");
-        if (!text.isEmpty() && isConnected()) {
+        if (!text.isEmpty() && isConnected() && isAddressInUS(text)) {
             SharedPreferences.Editor editor = pref.edit();
             editor.putString("address_field", text);
             editor.putBoolean("have_address", true);

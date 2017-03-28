@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
@@ -150,7 +151,6 @@ public class LegislativeActivity extends AppCompatActivity
 
                 fragmentManager
                         .beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_in_l, R.anim.slide_out_r)
                         .add(scanResult, "SCANPAGE")
                         .replace(R.id.content_main, scanResult)
                         .addToBackStack(null)
@@ -247,6 +247,8 @@ public class LegislativeActivity extends AppCompatActivity
             try {
                 URL url = new URL(params[0]);
                 connection = (HttpURLConnection) url.openConnection();
+                connection.setConnectTimeout(5000);
+
                 connection.connect();
                 InputStream stream = connection.getInputStream();
                 reader = new BufferedReader(new InputStreamReader(stream));
@@ -261,7 +263,12 @@ public class LegislativeActivity extends AppCompatActivity
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
+                Snackbar.make(getWindow().findViewById(R.id.legislator_page),
+                        "Error connecting to our servers. Please try again later.",
+                        Snackbar.LENGTH_LONG)
+                        .show();
                 e.printStackTrace();
+
             } finally {
                 if (connection != null) {
                     connection.disconnect();
