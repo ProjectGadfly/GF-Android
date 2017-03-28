@@ -36,8 +36,7 @@ public class LegislatorParsing extends Fragment {
 
 
     public LegislatorParsing() {
-        // Required empty public constructor
-    }
+            }
 
     /**
      * Use this factory method to create a new instance of
