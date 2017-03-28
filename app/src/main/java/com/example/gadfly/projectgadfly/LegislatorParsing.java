@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
@@ -101,6 +102,8 @@ public class LegislatorParsing extends Fragment {
             }
         }
 
+        DataHolder.getInstance().setData(arrayOfUsers);
+        ScanResult scanResult = new ScanResult();
         // Create the adapter to convert the array to views
         RepsAdapter adapter = new RepsAdapter(getActivity(), arrayOfUsers);
 
@@ -138,4 +141,11 @@ public class LegislatorParsing extends Fragment {
 //        // TODO: Update argument type and name
 //        void onFragmentInteraction(Uri uri);
 //    }
+}
+ class DataHolder {
+    private ArrayList<Representatives> data;
+    public ArrayList<Representatives> getData() {return data;}
+    public void setData(ArrayList<Representatives> data) {this.data = data;}
+    private static final DataHolder holder = new DataHolder();
+    public static DataHolder getInstance() {return holder;}
 }

@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -125,10 +126,12 @@ public class LegislativeActivity extends AppCompatActivity
             String scanContent = scanningResult.getContents();
             if (scanContent != null) {
                 ScanResult scanResult = new ScanResult();
+                LegislatorParsing legislatorParsing = new LegislatorParsing();
                 Bundle bundle = new Bundle();
                 bundle.putString("scanFormat", scanFormat);
                 bundle.putString("scanContent", scanContent);
                 scanResult.setArguments(bundle);
+
 
                 fragmentManager
                         .beginTransaction()

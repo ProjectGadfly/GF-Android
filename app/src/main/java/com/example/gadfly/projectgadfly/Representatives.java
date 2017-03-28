@@ -1,10 +1,16 @@
 package com.example.gadfly.projectgadfly;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
 /**
  * Created by papak on 3/21/2017.
  */
 
-class Representatives {
+public class Representatives implements Serializable {
+
     public String name, phone_number, email, district, state, photo_url, party;
 
     /**
