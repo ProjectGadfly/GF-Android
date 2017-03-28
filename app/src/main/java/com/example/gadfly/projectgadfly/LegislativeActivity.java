@@ -183,12 +183,6 @@ public class LegislativeActivity extends AppCompatActivity
             DialogFragment alertDialExample = new ForgetDialogFragment();
             alertDialExample.show(getSupportFragmentManager(), "AlertDialogFragment");
             return true;
-        } else if (id == R.id.action_tutorial) {
-            Intent intent = new Intent(getApplicationContext(), Introduction.class);
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putBoolean("not_first_run", false);
-            editor.apply();
-            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -198,11 +192,19 @@ public class LegislativeActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         FragmentManager fragmentManager = getSupportFragmentManager();
+
         AboutFragment aboutFragment = new AboutFragment();
+        //LegislatorParsing legislatorParsing = new LegislatorParsing();
         TeamFragment team = new TeamFragment();
         int id = item.getItemId();
 
         if (id == R.id.homeView) {
+            fragmentManager
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_out_l, R.anim.slide_in_r)
+                    .replace(R.id.content_main, legislatorParsing)
+                    .addToBackStack(null)
+                    .commit();
 
         } else if (id == R.id.about) {
             fragmentManager
@@ -218,6 +220,12 @@ public class LegislativeActivity extends AppCompatActivity
                     .replace(R.id.content_main, team)
                     .addToBackStack(null)
                     .commit();
+        } else if (id == R.id.tutorial) {
+            Intent intent = new Intent(getApplicationContext(), Introduction.class);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putBoolean("not_first_run", false);
+            editor.apply();
+            startActivity(intent);
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

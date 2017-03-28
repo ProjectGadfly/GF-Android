@@ -18,13 +18,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.seatgeek.placesautocomplete.PlacesAutocompleteTextView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -33,6 +37,8 @@ public class MainActivity extends AppCompatActivity
     private AboutFragment aboutFragment;
     private Bundle b;
     private SharedPreferences pref;
+
+
     @Override
     protected void attachBaseContext(Context context) {
         super.attachBaseContext(context);
@@ -43,7 +49,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
         b = new Bundle();
-        if(pref.getBoolean("have_address", false)) {
+        if (pref.getBoolean("have_address", false)) {
             Intent intent = new Intent(this, LegislativeActivity.class);
             intent.putExtras(b);
             startActivity(intent);
@@ -121,6 +127,12 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.content_main, team)
                     .addToBackStack(null)
                     .commit();
+        } else if (id == R.id.tutorial) {
+            Intent intent = new Intent(getApplicationContext(), Introduction.class);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putBoolean("not_first_run", false);
+            editor.apply();
+            startActivity(intent);
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -142,10 +154,12 @@ public class MainActivity extends AppCompatActivity
         View parentView = v.getRootView();
         PlacesAutocompleteTextView placesTextView = (PlacesAutocompleteTextView) parentView.findViewById(R.id.places_autocomplete);
         String text = placesTextView.getText().toString();
+
         View contentView = this.findViewById(android.R.id.content);
         text = text.replaceAll(" ", "+");
         if (!text.isEmpty() && isConnected()) {
             SharedPreferences.Editor editor = pref.edit();
+            DataHolder2.getInstance().setData(editor);
             editor.putString("address_field", text);
             editor.putBoolean("have_address", true);
             editor.apply();
@@ -178,4 +192,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+}
+class DataHolder2 {
+    private SharedPreferences.Editor data;
+    public SharedPreferences.Editor getData() {return data;}
+    public void setData(SharedPreferences.Editor data) {this.data = data;}
+    private static final DataHolder2 holder = new DataHolder2();
+    public static DataHolder2 getInstance() {return holder;}
 }
