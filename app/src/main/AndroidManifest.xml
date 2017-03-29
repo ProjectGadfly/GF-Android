@@ -38,10 +38,8 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <!-- URI tutsplus://deeplink -->
-                <data android:scheme="projectgadfly" android:host="idk"/>
-                <!-- URI http://www.mydeeplink.com -->
-                <data android:scheme="http" android:host="www.projectgadfly.com"/>
+                <!-- URI http://gadfly.mobi -->
+                <data android:scheme="http" android:host="gadfly.mobi"/>
             </intent-filter>
             </activity>
 
