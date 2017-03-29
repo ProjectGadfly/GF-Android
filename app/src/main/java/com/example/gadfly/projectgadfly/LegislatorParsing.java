@@ -78,24 +78,34 @@ public class LegislatorParsing extends Fragment {
         String address = getArguments().getString("address");
         TextView t = (TextView) v.findViewById(R.id.jsonPlace);
         t.setText(address);
-        JSONArray jsonArray = null;
+       JSONObject jsonObject = null;
+ //       JSONArray jsonArray = null;
 
         try {
-            jsonArray = new JSONArray(text);
+//            jsonArray = new JSONArray(text);
+            jsonObject = new JSONObject(text);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         arrayOfUsers = new ArrayList<>();
-
+        JSONArray jsonArray = null;
+        try {
+            jsonArray = jsonObject.getJSONArray("Results");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         for (int i = 0; i < jsonArray.length(); i++) {
 
             try {
-                JSONObject j = jsonArray.getJSONObject(i);
-                JSONArray officeA = j.getJSONArray("offices");
-                JSONObject office = officeA.getJSONObject(0);
-                arrayOfUsers.add(new Representatives(j.getString("full_name"),
-                        office.getString("phone"), j.getString("photo_url")));
+//                JSONObject j = jsonArray.getJSONObject(i);
+//                JSONArray officeA = j.getJSONArray("offices");
+//                JSONObject office = officeA.getJSONObject(0);
+//                arrayOfUsers.add(new Representatives(j.getString("full_name"),
+//                        office.getString("phone"), j.getString("photo_url")));
+                JSONObject api_object = jsonArray.getJSONObject(i);
+                arrayOfUsers.add(new Representatives(api_object.getString("name"),
+                        api_object.getString("phone"), api_object.getString("picURL")));
 
             } catch (JSONException e) {
                 e.printStackTrace();

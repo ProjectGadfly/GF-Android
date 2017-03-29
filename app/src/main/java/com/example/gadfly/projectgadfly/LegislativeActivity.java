@@ -29,6 +29,9 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -96,10 +99,12 @@ public class LegislativeActivity extends AppCompatActivity
         String url;
         if (pref.getString("json", "").equalsIgnoreCase("")) {
             if (pref.getBoolean("have_address", false)) {
-                url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
+//                url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
 //            url = pref.getString("address_field", "");
+                url = "https://api.myjson.com/bins/1bxuqf";
             } else {
-                url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
+//                url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
+                url = "https://api.myjson.com/bins/1bxuqf";
                 //Error should never get here
             }
             try {
@@ -109,10 +114,23 @@ public class LegislativeActivity extends AppCompatActivity
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putString("json", jsonString);
-            editor.apply();
+            try {
+                if (!handleErrorMessage(jsonString)) {
+//
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putBoolean("have_address", false);
+                    editor.apply();
+                    Intent intent = new Intent(this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("json", jsonString);
+        editor.apply();
         bundle.putString("json", pref.getString("json", ""));
         bundle.putString("address", pref.getString("address_field", ""));
 
@@ -199,7 +217,6 @@ public class LegislativeActivity extends AppCompatActivity
         if (id == R.id.homeView) {
             fragmentManager
                     .beginTransaction()
-
                     .replace(R.id.content_main, legislatorParsing)
                     .addToBackStack(null)
                     .commit();
@@ -294,6 +311,28 @@ public class LegislativeActivity extends AppCompatActivity
                 progressDialog.dismiss();
             }
         }
+    }
+
+    private boolean handleErrorMessage(String jsonString) throws JSONException {
+        JSONObject jsonObject = new JSONObject(jsonString);
+        String result = jsonObject.getString("Status");
+        if (result.equals("invalid address")) {
+            Snackbar.make(getWindow().findViewById(R.id.content_main),
+                    "Please enter valid address in the United States", Snackbar.LENGTH_LONG)
+                    .show();
+            return false;
+        } else if (result.equals("address should be in US")) {
+            Toast.makeText(getApplicationContext(), "Please enter valid address in the United States", Toast.LENGTH_LONG).show();
+
+            return false;
+        } else if ( result.equals("address too broad")) {
+            Toast.makeText(getApplicationContext(), "Please enter specific address in the United States", Toast.LENGTH_LONG).show();
+            return false;
+        } else {
+            return true;
+        }
+
+
     }
 
     /**
