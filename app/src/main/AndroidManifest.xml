@@ -31,7 +31,7 @@
         <activity
             android:name=".LegislativeActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|screenSize"
-            android:label="Your Representatives"
+            android:label="Project Gadfly"
             android:theme="@style/AppTheme.NoActionBar"
             >
             <intent-filter>

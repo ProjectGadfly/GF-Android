@@ -8,6 +8,8 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +49,7 @@ public class HomeFragment extends Fragment {
                             Intent intent = new Intent(getContext(), LegislativeActivity.class);
                             intent.putExtra("url", "https://ourapi/" + text);
                             startActivity(intent);
+                            getActivity().finish();
                         }
                     }
                 }
@@ -72,6 +75,7 @@ public class HomeFragment extends Fragment {
                         Intent intent = new Intent(getContext(), LegislativeActivity.class);
                         intent.putExtra("url", "https://ourapi/" + text);
                         startActivity(intent);
+                        getActivity().finish();
 
                     } else {
                         if (text.isEmpty()) {
@@ -101,5 +105,11 @@ public class HomeFragment extends Fragment {
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
+    }
+    public void onResume() {
+        super.onResume();
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        ActionBar actionBar = activity.getSupportActionBar();
+        actionBar.setTitle("Project Gadfly");
     }
 }
