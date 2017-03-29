@@ -18,17 +18,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.seatgeek.placesautocomplete.PlacesAutocompleteTextView;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -170,7 +166,6 @@ public class MainActivity extends AppCompatActivity
         text = text.replaceAll(" ", "+");
         if (!text.isEmpty() && isConnected() && isAddressInUS(text)) {
             SharedPreferences.Editor editor = pref.edit();
-            DataHolder2.getInstance().setData(editor);
             editor.putString("address_field", text);
             editor.putBoolean("have_address", true);
             editor.apply();
@@ -203,11 +198,4 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-}
-class DataHolder2 {
-    private SharedPreferences.Editor data;
-    public SharedPreferences.Editor getData() {return data;}
-    public void setData(SharedPreferences.Editor data) {this.data = data;}
-    private static final DataHolder2 holder = new DataHolder2();
-    public static DataHolder2 getInstance() {return holder;}
 }
