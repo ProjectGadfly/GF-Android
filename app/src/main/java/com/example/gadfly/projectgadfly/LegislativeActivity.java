@@ -103,17 +103,16 @@ public class LegislativeActivity extends AppCompatActivity
         String existingJSON = pref.getString("json", "");
         String enteredAddress = pref.getString("address_field", "");
 
-//        String url = "https://api.myjson.com/bins/1bxuqf"; //getString(R.string.get_reps_url);
-        String url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
+        String url = getString(R.string.get_reps_url);
+//        String url = "gadfly.mobi";
         if (existingJSON.equalsIgnoreCase("")) {
             if (pref.getBoolean("have_address", false)) {
-//                url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
-//            url += pref.getString("address_field", "");
-                url = "https://api.myjson.com/bins/1bxuqf";
+                url += enteredAddress;
             } else {
 //                url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
-                url = "https://api.myjson.com/bins/1bxuqf";
+//                url = "https://api.myjson.com/bins/1bxuqf";
                 //Error should never get here
+                Toast.makeText(this, "SAVE US", Toast.LENGTH_LONG).show();
             }
             try {
                 Object result = new JsonTask().execute(url).get();
@@ -249,7 +248,7 @@ public class LegislativeActivity extends AppCompatActivity
     private class JsonTask extends AsyncTask<String, String, String> {
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = new ProgressDialog(LegislativeActivity.this);
+            progressDialog = new ProgressDialog(getApplicationContext());
             //Create a dialog when waiting for the activity to execute
             progressDialog.setMessage("Please wait");
             progressDialog.setCancelable(false);
@@ -262,6 +261,7 @@ public class LegislativeActivity extends AppCompatActivity
             try {
                 URL url = new URL(params[0]);
                 connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestProperty("APIKey", "v1key");
                 connection.setConnectTimeout(5000);
 
                 connection.connect();

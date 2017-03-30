@@ -22,6 +22,9 @@
             android:textIsSelectable="true"
             android:id="@+id/rep_name"
             android:padding="3dp"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
             android:layout_toEndOf="@+id/photo_url"
             android:layout_toRightOf="@+id/photo_url"/>
 

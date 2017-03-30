@@ -1,5 +1,6 @@
 package com.example.gadfly.projectgadfly;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -67,6 +68,12 @@ public class HomeFragment extends Fragment {
                     String address = placesTextView.getText().toString();
                     address = address.replaceAll(" ", "+");
                     if (!address.isEmpty() && isConnected() && isAddressInUS(address)) {
+                        ProgressDialog progressDialog = new ProgressDialog(getContext());
+                        //Create a dialog when waiting for the activity to execute
+                        progressDialog.setMessage("Please wait");
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
+
                         editor.putString("address_field", address);
                         editor.putBoolean("have_address", true);
                         editor.apply();

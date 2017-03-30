@@ -1,26 +1,16 @@
 package com.example.gadfly.projectgadfly;
 
-import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.multidex.MultiDex;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -36,10 +26,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.seatgeek.placesautocomplete.PlacesAutocompleteTextView;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -233,6 +219,7 @@ public class MainActivity extends AppCompatActivity
         imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     }
 
+    /**
     public void getCurrentLocation(View view) {
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Please wait");
@@ -276,6 +263,7 @@ public class MainActivity extends AppCompatActivity
 
             // for ActivityCompat#requestPermissions for more details.
             Toast.makeText(getApplicationContext(), "No Permission", Toast.LENGTH_LONG).show();
+            progressDialog.dismiss();
             return;
         }
 
@@ -330,5 +318,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+    */
 
 }

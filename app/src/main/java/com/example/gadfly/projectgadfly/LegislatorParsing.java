@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,8 +48,6 @@ public class LegislatorParsing extends Fragment {
         View v = inflater.inflate(R.layout.fragment_blank, container, false);
         String text = getArguments().getString("json");
         String address = getArguments().getString("address");
-        TextView t = (TextView) v.findViewById(R.id.jsonPlace);
-        t.setText(address);
         JSONObject jsonObject = null;
 //        JSONArray jsonArray = null;
 

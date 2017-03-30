@@ -45,7 +45,7 @@
 
     <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
     <string name="play_again">Play Again</string>
-    <string name="get_reps_url">gadfly.mobi/services/v1/representatives?address=</string>
+    <string name="get_reps_url">http://gadfly.mobi/services/v1/representatives?address=</string>
     <string name="rescan_qr_code">Please rescan the QR code.</string>
     <string name="server_connection_error">Error connecting to our servers. Please try again later.</string>
     <string name="server_invalid_address">invalid address</string>
