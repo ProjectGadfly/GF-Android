@@ -1,11 +1,9 @@
 package com.example.gadfly.projectgadfly;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -31,15 +29,6 @@ import com.google.zxing.integration.android.IntentResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.concurrent.ExecutionException;
 
 public class LegislativeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -103,7 +92,7 @@ public class LegislativeActivity extends AppCompatActivity
         String enteredAddress = pref.getString("address_field", "");
 
         String url = getString(R.string.get_reps_url);
-//        String url = "gadfly.mobi";
+
         if (existingJSON.equalsIgnoreCase("")) {
             if (pref.getBoolean("have_address", false)) {
                 url += enteredAddress;
@@ -111,17 +100,8 @@ public class LegislativeActivity extends AppCompatActivity
 //                url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
 //                url = "https://api.myjson.com/bins/1bxuqf";
                 //Error should never get here
+                finish();
                 Toast.makeText(this, "SAVE US", Toast.LENGTH_LONG).show();
-            }
-            try {
-                Object result = new JsonTask().execute(url).get();
-                editor.putString("json", jsonString);
-                existingJSON = jsonString;
-                editor.apply();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
             }
         }
 
@@ -238,73 +218,6 @@ public class LegislativeActivity extends AppCompatActivity
 
 
 
-    private ProgressDialog progressDialog;
-    private String jsonString;
-    /**
-     * Parsing Json AsyncTask
-     */
-    private class JsonTask extends AsyncTask<String, String, String> {
-        protected void onPreExecute() {
-            super.onPreExecute();
-//            progressDialog = new ProgressDialog(getApplicationContext());
-//            //Create a dialog when waiting for the activity to execute
-//            progressDialog.setMessage("Please wait");
-//            progressDialog.setCancelable(false);
-//            progressDialog.show();
-        }
-
-        protected String doInBackground(String... params) {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-            try {
-                URL url = new URL(params[0]);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestProperty("APIKey", "v1key");
-                connection.setConnectTimeout(5000);
-
-                connection.connect();
-                InputStream stream = connection.getInputStream();
-                reader = new BufferedReader(new InputStreamReader(stream));
-                StringBuilder builder = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    builder.append(line);
-                }
-                jsonString = builder.toString();
-                return jsonString;
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                Snackbar.make(getWindow().findViewById(R.id.legislator_page),
-                        R.string.server_connection_error,
-                        Snackbar.LENGTH_LONG)
-                        .show();
-                e.printStackTrace();
-
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-                try {
-                    if (reader != null) {
-                        reader.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-//            if (progressDialog.isShowing()){
-//                progressDialog.dismiss();
-//            }
-        }
-    }
 
     private boolean isValidAddress(String jsonString) throws JSONException {
         JSONObject jsonObject = new JSONObject(jsonString);

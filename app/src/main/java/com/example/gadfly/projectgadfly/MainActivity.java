@@ -1,11 +1,13 @@
 package com.example.gadfly.projectgadfly;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -25,7 +27,18 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.seatgeek.placesautocomplete.OnPlaceSelectedListener;
 import com.seatgeek.placesautocomplete.PlacesAutocompleteTextView;
+import com.seatgeek.placesautocomplete.model.Place;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -34,6 +47,7 @@ public class MainActivity extends AppCompatActivity
     private AboutFragment aboutFragment;
     private Bundle b;
     private SharedPreferences pref;
+    private Context context;
 
 
     @Override
@@ -53,6 +67,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
             finish();
         }
+        context = getApplicationContext();
 
         setContentView(R.layout.activity_main);
 
@@ -76,6 +91,27 @@ public class MainActivity extends AppCompatActivity
                 .add(Home, "HOMETAG")
                 .replace(R.id.content_main, Home)
                 .commit();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        View contentView =  getWindow().findViewById(R.id.content_main);
+        final PlacesAutocompleteTextView placeText = (PlacesAutocompleteTextView) contentView.findViewById(R.id.places_autocomplete);
+        placeText.setOnPlaceSelectedListener(
+                new OnPlaceSelectedListener() {
+                    @Override
+                    public void onPlaceSelected(final Place place) {
+                        try {
+                            clickAction(placeText);
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
     }
 
     @Override
@@ -169,9 +205,11 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+
+    private ProgressDialog progressDialog;
     //Setting the response after clicking the Legislator Adapter button
     //If the user is not connected to the Internet, a warning message
-    public void clickAction(View v) {
+    public void clickAction(View v) throws ExecutionException, InterruptedException {
         View parentView = v.getRootView();
         PlacesAutocompleteTextView placesTextView = (PlacesAutocompleteTextView) parentView.findViewById(R.id.places_autocomplete);
         String text = placesTextView.getText().toString();
@@ -183,10 +221,10 @@ public class MainActivity extends AppCompatActivity
             editor.putString("address_field", text);
             editor.putBoolean("have_address", true);
             editor.apply();
-            Intent intent = new Intent(getApplicationContext(), LegislativeActivity.class);
-            intent.putExtra("url", "https://ourapi/" + text);
-            startActivity(intent);
-            finish();
+            progressDialog = new ProgressDialog(MainActivity.this);
+            progressDialog.setMessage("Getting representatives...");
+            progressDialog.show();
+            new JsonTask().execute(getString(R.string.get_reps_url) + text);
         } else {
             if (text.isEmpty()) {
                 Snackbar.make(contentView, R.string.ask_for_address, Snackbar.LENGTH_LONG)
@@ -200,6 +238,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+
 
     /**
      * Making notification bar transparent
@@ -219,105 +258,176 @@ public class MainActivity extends AppCompatActivity
         imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     }
 
+
+
+    private String jsonString;
     /**
-    public void getCurrentLocation(View view) {
-        ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Please wait");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-        final Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-//        Toast.makeText(getApplicationContext(), "JAJAJA", Toast.LENGTH_LONG).show();
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        LocationListener locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
-        Location location = null;
-        final int requestCode = 1;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-
-            // for ActivityCompat#requestPermissions for more details.
-            Toast.makeText(getApplicationContext(), "No Permission", Toast.LENGTH_LONG).show();
-            progressDialog.dismiss();
-            return;
+     * Parsing Json AsyncTask
+     */
+    private class JsonTask extends AsyncTask<String, String, String> {
+        protected void onPreExecute() {
+            super.onPreExecute();
         }
 
-        double latitude = locationManager.getLastKnownLocation("network").getLatitude();
-        double longitude = locationManager.getLastKnownLocation("network").getLongitude();
-        List<Address> addresses;
-        try {
-            addresses = geocoder.getFromLocation(latitude, longitude, 1);
-        } catch (IOException e) {
-            Toast.makeText(getApplicationContext(), "Error getting location. Please try again later", Toast.LENGTH_LONG).show();
-            progressDialog.dismiss();
-            return;
-//            e.printStackTrace();
+        protected String doInBackground(String... params) {
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+            try {
+                URL url = new URL(params[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestProperty("APIKey", "v1key");
+                connection.setConnectTimeout(5000);
+
+                connection.connect();
+                InputStream stream = connection.getInputStream();
+                reader = new BufferedReader(new InputStreamReader(stream));
+                StringBuilder builder = new StringBuilder();
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line);
+                }
+                jsonString = builder.toString();
+                return jsonString;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                Snackbar.make(getWindow().findViewById(R.id.legislator_page),
+                        R.string.server_connection_error,
+                        Snackbar.LENGTH_LONG)
+                        .show();
+                e.printStackTrace();
+
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+                try {
+                    if (reader != null) {
+                        reader.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
         }
-        progressDialog.dismiss();
-        String streetAddress, city, state, country, postalCode;
-        if (addresses.size() > 0) {
-            streetAddress = addresses.get(0).getAddressLine(0);
-            city = addresses.get(0).getLocality();
-            state = addresses.get(0).getAdminArea();
-            country = addresses.get(0).getCountryName();
-            postalCode = addresses.get(0).getPostalCode();
-            String fullAddress = streetAddress + ", " + city + ", " + state + ", " + country + ", " + postalCode;
-            PlacesAutocompleteTextView textView = (PlacesAutocompleteTextView) findViewById(R.id.places_autocomplete);
-            textView.setText(fullAddress);
-        } else {
-            Toast.makeText(getApplicationContext(), "Error. Do you have GPS turned on?", Toast.LENGTH_LONG).show();
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (progressDialog.isShowing()){
+                progressDialog.dismiss();
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("json", jsonString);
+                editor.apply();
+                Intent intent = new Intent(getApplicationContext(), LegislativeActivity.class);
+                startActivity(intent);
+                finish();
+            }
         }
-        // getting GPS status
+    }
+
+
+    /**
+     public void getCurrentLocation(View view) {
+     ProgressDialog progressDialog = new ProgressDialog(this);
+     progressDialog.setMessage("Please wait");
+     progressDialog.setCancelable(false);
+     progressDialog.show();
+     final Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+     //        Toast.makeText(getApplicationContext(), "JAJAJA", Toast.LENGTH_LONG).show();
+     LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+     LocationListener locationListener = new LocationListener() {
+    @Override
+    public void onLocationChanged(Location location) {
+
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case 1: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+    public void onStatusChanged(String provider, int status, Bundle extras) {
 
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_LONG).show();
-
-                } else {
-
-                    Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_LONG).show();
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-        }
     }
-    */
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+    };
+     Location location = null;
+     final int requestCode = 1;
+     if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+     // TODO: Consider calling
+
+     //    ActivityCompat#requestPermissions
+     // here to request the missing permissions, and then overriding
+     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
+     //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+     //                                          int[] grantResults)
+     // to handle the case where the user grants the permission. See the documentation
+
+     // for ActivityCompat#requestPermissions for more details.
+     Toast.makeText(getApplicationContext(), "No Permission", Toast.LENGTH_LONG).show();
+     progressDialog.dismiss();
+     return;
+     }
+
+     double latitude = locationManager.getLastKnownLocation("network").getLatitude();
+     double longitude = locationManager.getLastKnownLocation("network").getLongitude();
+     List<Address> addresses;
+     try {
+     addresses = geocoder.getFromLocation(latitude, longitude, 1);
+     } catch (IOException e) {
+     Toast.makeText(getApplicationContext(), "Error getting location. Please try again later", Toast.LENGTH_LONG).show();
+     progressDialog.dismiss();
+     return;
+     //            e.printStackTrace();
+     }
+     progressDialog.dismiss();
+     String streetAddress, city, state, country, postalCode;
+     if (addresses.size() > 0) {
+     streetAddress = addresses.get(0).getAddressLine(0);
+     city = addresses.get(0).getLocality();
+     state = addresses.get(0).getAdminArea();
+     country = addresses.get(0).getCountryName();
+     postalCode = addresses.get(0).getPostalCode();
+     String fullAddress = streetAddress + ", " + city + ", " + state + ", " + country + ", " + postalCode;
+     PlacesAutocompleteTextView textView = (PlacesAutocompleteTextView) findViewById(R.id.places_autocomplete);
+     textView.setText(fullAddress);
+     } else {
+     Toast.makeText(getApplicationContext(), "Error. Do you have GPS turned on?", Toast.LENGTH_LONG).show();
+     }
+     // getting GPS status
+     }
+
+     @Override
+     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+     switch (requestCode) {
+     case 1: {
+     // If request is cancelled, the result arrays are empty.
+     if (grantResults.length > 0
+     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+     // permission was granted, yay! Do the
+     // contacts-related task you need to do.
+     Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_LONG).show();
+
+     } else {
+
+     Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_LONG).show();
+     // permission denied, boo! Disable the
+     // functionality that depends on this permission.
+     }
+     return;
+     }
+     }
+     }
+     */
 
 }
