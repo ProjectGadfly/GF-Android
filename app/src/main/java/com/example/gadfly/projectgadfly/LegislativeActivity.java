@@ -77,7 +77,6 @@ public class LegislativeActivity extends AppCompatActivity
         //Set up the QR code scan in response to the scan button
         qrScan = new IntentIntegrator(this);
 
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         //Set up the icon of the button
         fab.setImageResource(R.drawable.ic_scan_icon);
@@ -101,10 +100,12 @@ public class LegislativeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         Bundle bundle = new Bundle();
-        SharedPreferences pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
+        String existingJSON = pref.getString("json", "");
+        String enteredAddress = pref.getString("address_field", "");
 
-        String url = getString(R.string.get_reps_url);
-        if (pref.getString("json", "").equalsIgnoreCase("")) {
+//        String url = "https://api.myjson.com/bins/1bxuqf"; //getString(R.string.get_reps_url);
+        String url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
+        if (existingJSON.equalsIgnoreCase("")) {
             if (pref.getBoolean("have_address", false)) {
 //                url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
 //            url += pref.getString("address_field", "");
@@ -116,30 +117,18 @@ public class LegislativeActivity extends AppCompatActivity
             }
             try {
                 Object result = new JsonTask().execute(url).get();
+                editor.putString("json", jsonString);
+                existingJSON = jsonString;
+                editor.apply();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
-
-            //Check if entered address is valid, as returned by API
-            try {
-                if (!isValidAddress(jsonString)) {
-                    editor.putBoolean("have_address", false);
-                    editor.apply();
-                    Intent intent = new Intent(this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
 
-        editor.putString("json", jsonString);
-        editor.apply();
-        bundle.putString("json", pref.getString("json", ""));
-        bundle.putString("address", pref.getString("address_field", ""));
+        bundle.putString("json", existingJSON);
+        bundle.putString("address", enteredAddress);
 
         legislatorParsing = new LegislatorParsing();
         legislatorParsing.setArguments(bundle);
@@ -331,8 +320,9 @@ public class LegislativeActivity extends AppCompatActivity
         } else if ( result.equals(getString(R.string.server_broad_address))) {
             Toast.makeText(getApplicationContext(), R.string.enter_specific_address, Toast.LENGTH_LONG).show();
             return false;
+        } else {
+            return true;
         }
-        return true;
     }
 
     /**

@@ -25,6 +25,6 @@ public class AboutFragment extends Fragment {
         super.onResume();
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         ActionBar actionBar = activity.getSupportActionBar();
-        actionBar.setTitle("About us");
+        actionBar.setTitle(R.string.about_us_title);
     }
 }

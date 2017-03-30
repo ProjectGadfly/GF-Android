@@ -49,8 +49,11 @@
     <string name="rescan_qr_code">Please rescan the QR code.</string>
     <string name="server_connection_error">Error connecting to our servers. Please try again later.</string>
     <string name="server_invalid_address">invalid address</string>
-    <string name="enter_valid_us_address">Please enter valid address in the United States</string>
+    <string name="enter_valid_us_address">Please enter an address in the United States</string>
     <string name="server_no_us_address">address should be in US</string>
     <string name="server_broad_address">address too broad</string>
-    <string name="enter_specific_address">Please enter specific address in the United States</string>
+    <string name="enter_specific_address">Please enter specific street address</string>
+    <string name="your_representatives">Your Representatives</string>
+    <string name="about_us_title">About Us</string>
+    <string name="get_current_location">GET CURRENT LOCATION</string>
 </resources>
