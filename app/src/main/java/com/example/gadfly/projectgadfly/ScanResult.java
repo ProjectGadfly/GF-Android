@@ -1,6 +1,9 @@
 package com.example.gadfly.projectgadfly;
 
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,8 +11,15 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
-
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -63,6 +73,9 @@ public class ScanResult extends Fragment {
         }
     }
 
+    private ProgressDialog progressDialog;
+    private String jsonString;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -73,12 +86,19 @@ public class ScanResult extends Fragment {
         ListView listView = (ListView) view.findViewById(R.id.resultList);
 
       ArrayList<Representatives> arrayOfUsers = DataHolder.getInstance().getData();
+        try {
+            Object result = new JsonTask().execute(getArguments().getString("scanContent")).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
         RepsAdapter repsAdapter = new RepsAdapter(getActivity(), arrayOfUsers);
         listView.setAdapter(repsAdapter);
         if (getArguments()!= null) {
             scanFormatView.setText(getArguments().getString("scanFormat"));
-            scanResultView.setText(getArguments().getString("scanContent"));
-
+//            scanResultView.setText(getArguments().getString("scanContent"));
+            scanResultView.setText(jsonString);
         } else {
             getFragmentManager().popBackStackImmediate();
         }
@@ -86,4 +106,71 @@ public class ScanResult extends Fragment {
         return view;
 
     }
+
+    /**
+     * Parsing Json AsyncTask
+     */
+    private class JsonTask extends AsyncTask<String, String, String> {
+        protected void onPreExecute() {
+            super.onPreExecute();
+//            progressDialog = new ProgressDialog(getApplicationContext());
+//            //Create a dialog when waiting for the activity to execute
+//            progressDialog.setMessage("Please wait");
+//            progressDialog.setCancelable(false);
+//            progressDialog.show();
+        }
+
+        protected String doInBackground(String... params) {
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+            try {
+                URL url = new URL(params[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestProperty("APIKey", "v1key");
+                connection.setConnectTimeout(5000);
+
+                connection.connect();
+                InputStream stream = connection.getInputStream();
+                reader = new BufferedReader(new InputStreamReader(stream));
+                StringBuilder builder = new StringBuilder();
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line);
+                }
+                jsonString = builder.toString();
+                return jsonString;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                Snackbar.make(getActivity().getWindow().findViewById(R.id.legislator_page),
+                        R.string.server_connection_error,
+                        Snackbar.LENGTH_LONG)
+                        .show();
+                e.printStackTrace();
+
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+                try {
+                    if (reader != null) {
+                        reader.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+//            if (progressDialog.isShowing()){
+//                progressDialog.dismiss();
+//            }
+        }
+    }
+
 }
