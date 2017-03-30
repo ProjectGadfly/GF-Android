@@ -53,6 +53,7 @@ public class LegislativeActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //Make the status bar transparent (SDK 21 AND UP)
         if (Build.VERSION.SDK_INT >= 21) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
@@ -61,29 +62,34 @@ public class LegislativeActivity extends AppCompatActivity
         //Set the layout of the activity based on legislator_activity layout
         setContentView(R.layout.legislator_activity);
 
+        // Make the status bar transparent
         changeStatusBarColor();
 
         fragmentManager = getSupportFragmentManager();
 
         pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
-
+        SharedPreferences.Editor editor = pref.edit();
 
         //Set up the navigation bar of the activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         //Set up the QR code scan in response to the scan button
         qrScan = new IntentIntegrator(this);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         //Set up the icon of the button
         fab.setImageResource(R.drawable.ic_scan_icon);
-        //Initiate scan activity
         fab.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+
+        //Initiate scan activity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 qrScan.initiateScan();
             }
         });
+
         //Set up the navigation bar
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -94,52 +100,42 @@ public class LegislativeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         Bundle bundle = new Bundle();
-        SharedPreferences pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
+        String existingJSON = pref.getString("json", "");
+        String enteredAddress = pref.getString("address_field", "");
 
-        String url;
-        if (pref.getString("json", "").equalsIgnoreCase("")) {
+        String url = getString(R.string.get_reps_url);
+//        String url = "gadfly.mobi";
+        if (existingJSON.equalsIgnoreCase("")) {
             if (pref.getBoolean("have_address", false)) {
-//                url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
-//            url = pref.getString("address_field", "");
-                url = "https://api.myjson.com/bins/1bxuqf";
+                url += enteredAddress;
             } else {
 //                url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
-                url = "https://api.myjson.com/bins/1bxuqf";
+//                url = "https://api.myjson.com/bins/1bxuqf";
                 //Error should never get here
+                Toast.makeText(this, "SAVE US", Toast.LENGTH_LONG).show();
             }
             try {
                 Object result = new JsonTask().execute(url).get();
+                editor.putString("json", jsonString);
+                existingJSON = jsonString;
+                editor.apply();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
-            try {
-                if (!handleErrorMessage(jsonString)) {
-//
-                    SharedPreferences.Editor editor = pref.edit();
-                    editor.putBoolean("have_address", false);
-                    editor.apply();
-                    Intent intent = new Intent(this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString("json", jsonString);
-        editor.apply();
-        bundle.putString("json", pref.getString("json", ""));
-        bundle.putString("address", pref.getString("address_field", ""));
+
+        bundle.putString("json", existingJSON);
+        bundle.putString("address", enteredAddress);
 
         legislatorParsing = new LegislatorParsing();
         legislatorParsing.setArguments(bundle);
 
         fragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_r, R.anim.slide_out_l, R.anim.slide_in_l, R.anim.slide_out_r)
-                .add(legislatorParsing, "BLANK").replace(R.id.content_main, legislatorParsing).commit();
+                .add(legislatorParsing, "BLANK")
+                .replace(R.id.content_main, legislatorParsing)
+                .commit();
     }
 
     @Override
@@ -152,21 +148,20 @@ public class LegislativeActivity extends AppCompatActivity
         }
     }
 
+    // Handle result of qr code scan
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-        if (scanningResult != null) {
 
+        if (scanningResult != null) {
             String scanFormat = scanningResult.getFormatName();
             String scanContent = scanningResult.getContents();
             if (scanContent != null) {
                 ScanResult scanResult = new ScanResult();
-                LegislatorParsing legislatorParsing = new LegislatorParsing();
                 Bundle bundle = new Bundle();
                 bundle.putString("scanFormat", scanFormat);
                 bundle.putString("scanContent", scanContent);
                 scanResult.setArguments(bundle);
-
                 fragmentManager
                         .beginTransaction()
                         .add(scanResult, "SCANPAGE")
@@ -175,7 +170,7 @@ public class LegislativeActivity extends AppCompatActivity
                         .commitAllowingStateLoss();
             }
         } else {
-            Toast toast = Toast.makeText(getApplicationContext(), "No data", Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(getApplicationContext(), R.string.rescan_qr_code, Toast.LENGTH_LONG);
             toast.show();
         }
     }
@@ -210,7 +205,6 @@ public class LegislativeActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         AboutFragment aboutFragment = new AboutFragment();
-        //LegislatorParsing legislatorParsing = new LegislatorParsing();
         TeamFragment team = new TeamFragment();
         int id = item.getItemId();
 
@@ -254,7 +248,7 @@ public class LegislativeActivity extends AppCompatActivity
     private class JsonTask extends AsyncTask<String, String, String> {
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = new ProgressDialog(LegislativeActivity.this);
+            progressDialog = new ProgressDialog(getApplicationContext());
             //Create a dialog when waiting for the activity to execute
             progressDialog.setMessage("Please wait");
             progressDialog.setCancelable(false);
@@ -267,6 +261,7 @@ public class LegislativeActivity extends AppCompatActivity
             try {
                 URL url = new URL(params[0]);
                 connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestProperty("APIKey", "v1key");
                 connection.setConnectTimeout(5000);
 
                 connection.connect();
@@ -284,7 +279,7 @@ public class LegislativeActivity extends AppCompatActivity
                 e.printStackTrace();
             } catch (IOException e) {
                 Snackbar.make(getWindow().findViewById(R.id.legislator_page),
-                        "Error connecting to our servers. Please try again later.",
+                        R.string.server_connection_error,
                         Snackbar.LENGTH_LONG)
                         .show();
                 e.printStackTrace();
@@ -313,26 +308,21 @@ public class LegislativeActivity extends AppCompatActivity
         }
     }
 
-    private boolean handleErrorMessage(String jsonString) throws JSONException {
+    private boolean isValidAddress(String jsonString) throws JSONException {
         JSONObject jsonObject = new JSONObject(jsonString);
         String result = jsonObject.getString("Status");
-        if (result.equals("invalid address")) {
-            Snackbar.make(getWindow().findViewById(R.id.content_main),
-                    "Please enter valid address in the United States", Snackbar.LENGTH_LONG)
-                    .show();
+        if (result.equals(getString(R.string.server_invalid_address))) {
+            Toast.makeText(getApplicationContext(), R.string.enter_valid_us_address, Toast.LENGTH_LONG).show();
             return false;
-        } else if (result.equals("address should be in US")) {
-            Toast.makeText(getApplicationContext(), "Please enter valid address in the United States", Toast.LENGTH_LONG).show();
-
+        } else if (result.equals(getString(R.string.server_no_us_address))) {
+            Toast.makeText(getApplicationContext(), R.string.enter_valid_us_address, Toast.LENGTH_LONG).show();
             return false;
-        } else if ( result.equals("address too broad")) {
-            Toast.makeText(getApplicationContext(), "Please enter specific address in the United States", Toast.LENGTH_LONG).show();
+        } else if ( result.equals(getString(R.string.server_broad_address))) {
+            Toast.makeText(getApplicationContext(), R.string.enter_specific_address, Toast.LENGTH_LONG).show();
             return false;
         } else {
             return true;
         }
-
-
     }
 
     /**

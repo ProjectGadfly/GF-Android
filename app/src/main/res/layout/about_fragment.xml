@@ -5,15 +5,15 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="@string/drawer_about_us"
-        android:id="@+id/abouttitle"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/abouttitle"
         android:text="@string/about_us"
-        android:textSize="15sp"/>
+        android:textSize="20sp"
+        android:id="@+id/us_description"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:layout_below="@+id/us_description"
+        android:src="@drawable/ic_team_image"/>
 
 </RelativeLayout>

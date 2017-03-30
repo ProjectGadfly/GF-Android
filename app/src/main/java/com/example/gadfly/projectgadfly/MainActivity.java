@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.seatgeek.placesautocomplete.PlacesAutocompleteTextView;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity
         super.attachBaseContext(context);
         MultiDex.install(this);
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,9 +52,6 @@ public class MainActivity extends AppCompatActivity
             intent.putExtras(b);
             startActivity(intent);
             finish();
-        }
-        if (Build.VERSION.SDK_INT >= 21) {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
 
         setContentView(R.layout.activity_main);
@@ -77,7 +76,6 @@ public class MainActivity extends AppCompatActivity
                 .add(Home, "HOMETAG")
                 .replace(R.id.content_main, Home)
                 .commit();
-
     }
 
     @Override
@@ -89,7 +87,6 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
-
 
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -139,15 +136,32 @@ public class MainActivity extends AppCompatActivity
     // Checks if the user is connected to the internet, returns false if not
     private boolean isConnected() {
         ConnectivityManager cm =
-                (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
+        if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
+            return true;
+        } else {
+            hideKeyboard();
+            Toast toast = Toast.makeText(this, R.string.no_internet, Toast.LENGTH_LONG);
+            toast.show();
+            return false;
+        }
     }
 
+    public boolean isValidAddress(String address) {
+        if (isAddressInUS(address) && address.length() > 20) {
+            return true;
+        }
+        Toast.makeText(getApplicationContext(),"Please enter a more specific address", Toast.LENGTH_LONG).show();
+        return false;
+    }
 
     public boolean isAddressInUS(String location) {
-        if (!(location.contains("united+states") || location.contains("United+States"))) {
+        if (!(location.contains("united+states")
+                || location.contains("United+States")
+                || location.contains("united+States")
+                || location.contains("United+states"))) {
+            hideKeyboard();
             Snackbar.make(getWindow().findViewById(R.id.content_main), "Please enter an address in the United States", Snackbar.LENGTH_LONG)
                     .show();
             return false;
@@ -164,7 +178,7 @@ public class MainActivity extends AppCompatActivity
 
         View contentView = getWindow().findViewById(R.id.content_main);
         text = text.replaceAll(" ", "+");
-        if (!text.isEmpty() && isConnected() && isAddressInUS(text)) {
+        if (!text.isEmpty() && isConnected() && isValidAddress(text)) {
             SharedPreferences.Editor editor = pref.edit();
             editor.putString("address_field", text);
             editor.putBoolean("have_address", true);
@@ -191,11 +205,119 @@ public class MainActivity extends AppCompatActivity
      * Making notification bar transparent
      */
     private void changeStatusBarColor() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= 21) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Color.TRANSPARENT);
         }
     }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+    }
+
+    /**
+    public void getCurrentLocation(View view) {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Please wait");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        final Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+//        Toast.makeText(getApplicationContext(), "JAJAJA", Toast.LENGTH_LONG).show();
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        LocationListener locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+        Location location = null;
+        final int requestCode = 1;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+
+            // for ActivityCompat#requestPermissions for more details.
+            Toast.makeText(getApplicationContext(), "No Permission", Toast.LENGTH_LONG).show();
+            progressDialog.dismiss();
+            return;
+        }
+
+        double latitude = locationManager.getLastKnownLocation("network").getLatitude();
+        double longitude = locationManager.getLastKnownLocation("network").getLongitude();
+        List<Address> addresses;
+        try {
+            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+        } catch (IOException e) {
+            Toast.makeText(getApplicationContext(), "Error getting location. Please try again later", Toast.LENGTH_LONG).show();
+            progressDialog.dismiss();
+            return;
+//            e.printStackTrace();
+        }
+        progressDialog.dismiss();
+        String streetAddress, city, state, country, postalCode;
+        if (addresses.size() > 0) {
+            streetAddress = addresses.get(0).getAddressLine(0);
+            city = addresses.get(0).getLocality();
+            state = addresses.get(0).getAdminArea();
+            country = addresses.get(0).getCountryName();
+            postalCode = addresses.get(0).getPostalCode();
+            String fullAddress = streetAddress + ", " + city + ", " + state + ", " + country + ", " + postalCode;
+            PlacesAutocompleteTextView textView = (PlacesAutocompleteTextView) findViewById(R.id.places_autocomplete);
+            textView.setText(fullAddress);
+        } else {
+            Toast.makeText(getApplicationContext(), "Error. Do you have GPS turned on?", Toast.LENGTH_LONG).show();
+        }
+        // getting GPS status
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_LONG).show();
+
+                } else {
+
+                    Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_LONG).show();
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+        }
+    }
+    */
 
 }

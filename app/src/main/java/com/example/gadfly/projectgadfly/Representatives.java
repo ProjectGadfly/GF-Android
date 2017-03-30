@@ -1,8 +1,5 @@
 package com.example.gadfly.projectgadfly;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.io.Serializable;
 
 /**
@@ -22,11 +19,11 @@ public class Representatives implements Serializable {
     Representatives(String name, String phone_number, String photo_url) {
         this.name = name;
         this.phone_number = phone_number;
-        this.email = "STOCK";
-        this.district = "STOCK";
-        this.state = "STOCK";
+        this.email = "";
+        this.district = "";
+        this.state = "";
         this.photo_url = photo_url;
-        this.party = "STOCK";
+        this.party = "";
     }
 
     // Constructor for future development with more fields for legislator
