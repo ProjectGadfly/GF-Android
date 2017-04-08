@@ -1,16 +1,27 @@
 package com.example.gadfly.projectgadfly;
 
+import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.multidex.MultiDex;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -25,7 +36,20 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.seatgeek.placesautocomplete.OnPlaceSelectedListener;
 import com.seatgeek.placesautocomplete.PlacesAutocompleteTextView;
+import com.seatgeek.placesautocomplete.model.Place;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -34,6 +58,7 @@ public class MainActivity extends AppCompatActivity
     private AboutFragment aboutFragment;
     private Bundle b;
     private SharedPreferences pref;
+    private Context context;
 
 
     @Override
@@ -53,6 +78,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
             finish();
         }
+        context = getApplicationContext();
 
         setContentView(R.layout.activity_main);
 
@@ -69,6 +95,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.getMenu().getItem(0).setChecked(true);
 
         fragmentManager = getSupportFragmentManager();
         Home = new HomeFragment();
@@ -76,6 +103,27 @@ public class MainActivity extends AppCompatActivity
                 .add(Home, "HOMETAG")
                 .replace(R.id.content_main, Home)
                 .commit();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        View contentView =  getWindow().findViewById(R.id.content_main);
+        final PlacesAutocompleteTextView placeText = (PlacesAutocompleteTextView) contentView.findViewById(R.id.places_autocomplete);
+        placeText.setOnPlaceSelectedListener(
+                new OnPlaceSelectedListener() {
+                    @Override
+                    public void onPlaceSelected(final Place place) {
+                        try {
+                            clickAction(placeText);
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
     }
 
     @Override
@@ -169,9 +217,11 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+
+    private ProgressDialog progressDialog;
     //Setting the response after clicking the Legislator Adapter button
     //If the user is not connected to the Internet, a warning message
-    public void clickAction(View v) {
+    public void clickAction(View v) throws ExecutionException, InterruptedException {
         View parentView = v.getRootView();
         PlacesAutocompleteTextView placesTextView = (PlacesAutocompleteTextView) parentView.findViewById(R.id.places_autocomplete);
         String text = placesTextView.getText().toString();
@@ -183,10 +233,10 @@ public class MainActivity extends AppCompatActivity
             editor.putString("address_field", text);
             editor.putBoolean("have_address", true);
             editor.apply();
-            Intent intent = new Intent(getApplicationContext(), LegislativeActivity.class);
-            intent.putExtra("url", "https://ourapi/" + text);
-            startActivity(intent);
-            finish();
+            progressDialog = new ProgressDialog(MainActivity.this);
+            progressDialog.setMessage("Getting representatives...");
+            progressDialog.show();
+            new JsonTask().execute(getString(R.string.get_reps_url) + text);
         } else {
             if (text.isEmpty()) {
                 Snackbar.make(contentView, R.string.ask_for_address, Snackbar.LENGTH_LONG)
@@ -200,6 +250,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+
 
     /**
      * Making notification bar transparent
@@ -219,14 +270,84 @@ public class MainActivity extends AppCompatActivity
         imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     }
 
+
+
+    private String jsonString;
     /**
+     * Parsing Json AsyncTask
+     */
+    private class JsonTask extends AsyncTask<String, String, String> {
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        protected String doInBackground(String... params) {
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+            try {
+                URL url = new URL(params[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestProperty("APIKey", "v1key");
+                connection.setConnectTimeout(5000);
+
+                connection.connect();
+                InputStream stream = connection.getInputStream();
+                reader = new BufferedReader(new InputStreamReader(stream));
+                StringBuilder builder = new StringBuilder();
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line);
+                }
+                jsonString = builder.toString();
+                return jsonString;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                Snackbar.make(getWindow().findViewById(R.id.legislator_page),
+                        R.string.server_connection_error,
+                        Snackbar.LENGTH_LONG)
+                        .show();
+                e.printStackTrace();
+
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+                try {
+                    if (reader != null) {
+                        reader.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (progressDialog.isShowing()){
+                progressDialog.dismiss();
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("json", jsonString);
+                editor.apply();
+                Intent intent = new Intent(getApplicationContext(), LegislativeActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        }
+    }
+
+
     public void getCurrentLocation(View view) {
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Please wait");
         progressDialog.setCancelable(false);
         progressDialog.show();
         final Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-//        Toast.makeText(getApplicationContext(), "JAJAJA", Toast.LENGTH_LONG).show();
+        //        Toast.makeText(getApplicationContext(), "JAJAJA", Toast.LENGTH_LONG).show();
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         LocationListener locationListener = new LocationListener() {
             @Override
@@ -276,7 +397,7 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(getApplicationContext(), "Error getting location. Please try again later", Toast.LENGTH_LONG).show();
             progressDialog.dismiss();
             return;
-//            e.printStackTrace();
+            //            e.printStackTrace();
         }
         progressDialog.dismiss();
         String streetAddress, city, state, country, postalCode;
@@ -318,6 +439,5 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
-    */
 
 }

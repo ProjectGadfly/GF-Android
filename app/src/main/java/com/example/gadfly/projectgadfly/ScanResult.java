@@ -81,7 +81,6 @@ public class ScanResult extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_scan_result, container, false);
-        TextView scanFormatView = (TextView) view.findViewById(R.id.scanFormatTxtV);
         TextView scanResultView = (TextView) view.findViewById(R.id.scanResultTxtV);
         ListView listView = (ListView) view.findViewById(R.id.resultList);
 
@@ -96,8 +95,7 @@ public class ScanResult extends Fragment {
         RepsAdapter repsAdapter = new RepsAdapter(getActivity(), arrayOfUsers);
         listView.setAdapter(repsAdapter);
         if (getArguments()!= null) {
-            scanFormatView.setText(getArguments().getString("scanFormat"));
-//            scanResultView.setText(getArguments().getString("scanContent"));
+            //            scanResultView.setText(getArguments().getString("scanContent"));
             scanResultView.setText(jsonString);
         } else {
             getFragmentManager().popBackStackImmediate();

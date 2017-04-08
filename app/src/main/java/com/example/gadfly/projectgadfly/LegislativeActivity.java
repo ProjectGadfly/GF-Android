@@ -39,7 +39,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.concurrent.ExecutionException;
 
 public class LegislativeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -48,6 +47,9 @@ public class LegislativeActivity extends AppCompatActivity
     private LegislatorParsing legislatorParsing;
     private FragmentManager fragmentManager;
     SharedPreferences pref;
+    private String scanFormat;
+    private String scanContent;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,13 +99,14 @@ public class LegislativeActivity extends AppCompatActivity
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.getMenu().getItem(0).setChecked(true);
 
         Bundle bundle = new Bundle();
         String existingJSON = pref.getString("json", "");
         String enteredAddress = pref.getString("address_field", "");
 
         String url = getString(R.string.get_reps_url);
-//        String url = "gadfly.mobi";
+
         if (existingJSON.equalsIgnoreCase("")) {
             if (pref.getBoolean("have_address", false)) {
                 url += enteredAddress;
@@ -111,17 +114,8 @@ public class LegislativeActivity extends AppCompatActivity
 //                url = "https://openstates.org/api/v1/legislators/?state=dc&chamber=upper";
 //                url = "https://api.myjson.com/bins/1bxuqf";
                 //Error should never get here
+                finish();
                 Toast.makeText(this, "SAVE US", Toast.LENGTH_LONG).show();
-            }
-            try {
-                Object result = new JsonTask().execute(url).get();
-                editor.putString("json", jsonString);
-                existingJSON = jsonString;
-                editor.apply();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
             }
         }
 
@@ -153,20 +147,16 @@ public class LegislativeActivity extends AppCompatActivity
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         View contentView = getWindow().findViewById(R.id.content_main);
         if (scanningResult != null) {
-            String scanFormat = scanningResult.getFormatName();
-            String scanContent = scanningResult.getContents();
+            scanFormat = scanningResult.getFormatName();
+            scanContent = scanningResult.getContents();
             String actualurl = "http://gadfly.mobi/services/v1/representatives?address="; //"http://gadfly.mobi/services/v1/script?id="
             if (scanContent != null && scanContent.startsWith(actualurl)) {
-                ScanResult scanResult = new ScanResult();
-                Bundle bundle = new Bundle();
-                bundle.putString("scanFormat", scanFormat);
-                bundle.putString("scanContent", scanContent);
-                scanResult.setArguments(bundle);
-                fragmentManager
-                        .beginTransaction()
-                        .add(scanResult, "SCANPAGE")
-                        .replace(R.id.content_main, scanResult)
-                            .commitAllowingStateLoss();
+                progressDialog = new ProgressDialog(LegislativeActivity.this);
+                progressDialog.setMessage("Getting call scripts..");
+                progressDialog.show();
+//                new JsonTask().execute(getString(R.string.get_reps_url) );
+                new JsonTask().execute(scanContent);
+                return;
             }
         } else {
             Toast toast = Toast.makeText(getApplicationContext(), R.string.rescan_qr_code, Toast.LENGTH_LONG);
@@ -238,7 +228,35 @@ public class LegislativeActivity extends AppCompatActivity
 
 
 
-    private ProgressDialog progressDialog;
+
+    private boolean isValidAddress(String jsonString) throws JSONException {
+        JSONObject jsonObject = new JSONObject(jsonString);
+        String result = jsonObject.getString("Status");
+        if (result.equals(getString(R.string.server_invalid_address))) {
+            Toast.makeText(getApplicationContext(), R.string.enter_valid_us_address, Toast.LENGTH_LONG).show();
+            return false;
+        } else if (result.equals(getString(R.string.server_no_us_address))) {
+            Toast.makeText(getApplicationContext(), R.string.enter_valid_us_address, Toast.LENGTH_LONG).show();
+            return false;
+        } else if ( result.equals(getString(R.string.server_broad_address))) {
+            Toast.makeText(getApplicationContext(), R.string.enter_specific_address, Toast.LENGTH_LONG).show();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Making notification bar transparent
+     */
+    private void changeStatusBarColor() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.TRANSPARENT);
+        }
+    }
+
     private String jsonString;
     /**
      * Parsing Json AsyncTask
@@ -246,11 +264,6 @@ public class LegislativeActivity extends AppCompatActivity
     private class JsonTask extends AsyncTask<String, String, String> {
         protected void onPreExecute() {
             super.onPreExecute();
-//            progressDialog = new ProgressDialog(getApplicationContext());
-//            //Create a dialog when waiting for the activity to execute
-//            progressDialog.setMessage("Please wait");
-//            progressDialog.setCancelable(false);
-//            progressDialog.show();
         }
 
         protected String doInBackground(String... params) {
@@ -300,37 +313,19 @@ public class LegislativeActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-//            if (progressDialog.isShowing()){
-//                progressDialog.dismiss();
-//            }
-        }
-    }
-
-    private boolean isValidAddress(String jsonString) throws JSONException {
-        JSONObject jsonObject = new JSONObject(jsonString);
-        String result = jsonObject.getString("Status");
-        if (result.equals(getString(R.string.server_invalid_address))) {
-            Toast.makeText(getApplicationContext(), R.string.enter_valid_us_address, Toast.LENGTH_LONG).show();
-            return false;
-        } else if (result.equals(getString(R.string.server_no_us_address))) {
-            Toast.makeText(getApplicationContext(), R.string.enter_valid_us_address, Toast.LENGTH_LONG).show();
-            return false;
-        } else if ( result.equals(getString(R.string.server_broad_address))) {
-            Toast.makeText(getApplicationContext(), R.string.enter_specific_address, Toast.LENGTH_LONG).show();
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * Making notification bar transparent
-     */
-    private void changeStatusBarColor() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.TRANSPARENT);
+            if (progressDialog.isShowing()){
+                progressDialog.dismiss();
+                ScanResult scanResult = new ScanResult();
+                Bundle bundle = new Bundle();
+                bundle.putString("scanFormat", scanFormat);
+                bundle.putString("scanContent", scanContent);
+                scanResult.setArguments(bundle);
+                fragmentManager
+                        .beginTransaction()
+                        .add(scanResult, "SCANPAGE")
+                        .replace(R.id.content_main, scanResult)
+                        .commitAllowingStateLoss();
+            }
         }
     }
 

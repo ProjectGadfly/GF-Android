@@ -7,18 +7,21 @@
     android:orientation="vertical">
 
     <!-- TODO: Update blank fragment layout -->
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="0.5">
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/scanFormatTxtV" />
-    <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/scanResultTxtV"
+        android:fontFamily="sans-serif-smallcaps"
         android:text=""/>
+</ScrollView>
     <ListView
+        android:layout_height="0dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
         android:id="@+id/resultList">
     </ListView>
 
