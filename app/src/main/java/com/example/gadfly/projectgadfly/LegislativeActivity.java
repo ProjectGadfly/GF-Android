@@ -1,9 +1,11 @@
 package com.example.gadfly.projectgadfly;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -30,6 +32,14 @@ import com.google.zxing.integration.android.IntentResult;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class LegislativeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -37,6 +47,9 @@ public class LegislativeActivity extends AppCompatActivity
     private LegislatorParsing legislatorParsing;
     private FragmentManager fragmentManager;
     SharedPreferences pref;
+    private String scanFormat;
+    private String scanContent;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +99,7 @@ public class LegislativeActivity extends AppCompatActivity
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.getMenu().getItem(0).setChecked(true);
 
         Bundle bundle = new Bundle();
         String existingJSON = pref.getString("json", "");
@@ -133,20 +147,16 @@ public class LegislativeActivity extends AppCompatActivity
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         View contentView = getWindow().findViewById(R.id.content_main);
         if (scanningResult != null) {
-            String scanFormat = scanningResult.getFormatName();
-            String scanContent = scanningResult.getContents();
+            scanFormat = scanningResult.getFormatName();
+            scanContent = scanningResult.getContents();
             String actualurl = "http://gadfly.mobi/services/v1/representatives?address="; //"http://gadfly.mobi/services/v1/script?id="
             if (scanContent != null && scanContent.startsWith(actualurl)) {
-                ScanResult scanResult = new ScanResult();
-                Bundle bundle = new Bundle();
-                bundle.putString("scanFormat", scanFormat);
-                bundle.putString("scanContent", scanContent);
-                scanResult.setArguments(bundle);
-                fragmentManager
-                        .beginTransaction()
-                        .add(scanResult, "SCANPAGE")
-                        .replace(R.id.content_main, scanResult)
-                            .commitAllowingStateLoss();
+                progressDialog = new ProgressDialog(LegislativeActivity.this);
+                progressDialog.setMessage("Getting call scripts..");
+                progressDialog.show();
+//                new JsonTask().execute(getString(R.string.get_reps_url) );
+                new JsonTask().execute(scanContent);
+                return;
             }
         } else {
             Toast toast = Toast.makeText(getApplicationContext(), R.string.rescan_qr_code, Toast.LENGTH_LONG);
@@ -244,6 +254,78 @@ public class LegislativeActivity extends AppCompatActivity
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Color.TRANSPARENT);
+        }
+    }
+
+    private String jsonString;
+    /**
+     * Parsing Json AsyncTask
+     */
+    private class JsonTask extends AsyncTask<String, String, String> {
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        protected String doInBackground(String... params) {
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+            try {
+                URL url = new URL(params[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestProperty("APIKey", "v1key");
+                connection.setConnectTimeout(5000);
+
+                connection.connect();
+                InputStream stream = connection.getInputStream();
+                reader = new BufferedReader(new InputStreamReader(stream));
+                StringBuilder builder = new StringBuilder();
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line);
+                }
+                jsonString = builder.toString();
+                return jsonString;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                Snackbar.make(getWindow().findViewById(R.id.legislator_page),
+                        R.string.server_connection_error,
+                        Snackbar.LENGTH_LONG)
+                        .show();
+                e.printStackTrace();
+
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+                try {
+                    if (reader != null) {
+                        reader.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (progressDialog.isShowing()){
+                progressDialog.dismiss();
+                ScanResult scanResult = new ScanResult();
+                Bundle bundle = new Bundle();
+                bundle.putString("scanFormat", scanFormat);
+                bundle.putString("scanContent", scanContent);
+                scanResult.setArguments(bundle);
+                fragmentManager
+                        .beginTransaction()
+                        .add(scanResult, "SCANPAGE")
+                        .replace(R.id.content_main, scanResult)
+                        .commitAllowingStateLoss();
+            }
         }
     }
 

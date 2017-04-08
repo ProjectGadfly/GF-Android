@@ -21,7 +21,7 @@ import java.util.ArrayList;
  * Activities that contain this fragment must implement the
  * {atsymbol link LegislatorParsing.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link LegislatorParsing#newInstance} factory method to
+ * Use the {atlink LegislatorParsing#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class LegislatorParsing extends Fragment {
@@ -74,8 +74,14 @@ public class LegislatorParsing extends Fragment {
 //                arrayOfUsers.add(new Representatives(j.getString("full_name"),
 //                        office.getString("phone"), j.getString("photo_url")));
                 JSONObject api_object = jsonArray.getJSONObject(i);
-                arrayOfUsers.add(new Representatives(api_object.getString("name"),
-                        api_object.getString("phone"), api_object.getString("picURL")));
+                JSONArray tags = api_object.getJSONArray("tags");
+                arrayOfUsers.add(
+                        new Representatives(
+                                api_object.getString("name"),
+                                api_object.getString("phone"),
+                                api_object.getString("picURL"),
+                                api_object.getString("party"),
+                                getPosition(tags)));
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -98,6 +104,25 @@ public class LegislatorParsing extends Fragment {
         ActionBar actionBar = activity.getSupportActionBar();
         actionBar.setTitle(R.string.your_representatives);
     }
+
+
+    public String getPosition(JSONArray tags) throws JSONException {
+        StringBuilder position = new StringBuilder();
+        for (int i = tags.length() -1; i >= 0; i--) {
+            if (tags.get(i).toString().equalsIgnoreCase("1")) {
+                position.append("Federal");
+            } else if (tags.get(i).toString().equalsIgnoreCase("2")) {
+                position.append("State");
+            } else if (tags.get(i).toString().equalsIgnoreCase("3")) {
+                position.append("Senator");
+            }else if (tags.get(i).toString().equalsIgnoreCase("4")) {
+                position.append("Representative");
+            }
+            position.append(" ");
+        }
+        return position.toString();
+    }
+
 }
 
 class DataHolder {
