@@ -196,7 +196,6 @@ public class LegislativeActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         AboutFragment aboutFragment = new AboutFragment();
-        TeamFragment team = new TeamFragment();
         int id = item.getItemId();
 
         if (id == R.id.homeView) {
@@ -208,11 +207,6 @@ public class LegislativeActivity extends AppCompatActivity
             fragmentManager
                     .beginTransaction()
                     .replace(R.id.content_main, aboutFragment)
-                    .commit();
-        } else if (id == R.id.team) {
-            fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.content_main, team)
                     .commit();
         } else if (id == R.id.tutorial) {
             Intent intent = new Intent(getApplicationContext(), Introduction.class);
