@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         FragmentManager fragmentManager = getSupportFragmentManager();
         aboutFragment = new AboutFragment();
-        TeamFragment team = new TeamFragment();
+
         //Handle the Home button
         if (id == R.id.homeView) {
             if (!fragmentManager.findFragmentByTag("HOMETAG").isVisible())
@@ -162,13 +162,7 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.content_main, aboutFragment)
                     .addToBackStack(null)
                     .commit();
-            //Handle the Team button
-        } else if (id == R.id.team) {
-            fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.content_main, team)
-                    .addToBackStack(null)
-                    .commit();
+            //Handle the Tutorial button
         } else if (id == R.id.tutorial) {
             Intent intent = new Intent(getApplicationContext(), Introduction.class);
             SharedPreferences.Editor editor = pref.edit();
@@ -427,11 +421,7 @@ public class MainActivity extends AppCompatActivity
 
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-                    Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_LONG).show();
-
                 } else {
-
-                    Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_LONG).show();
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
