@@ -1,4 +1,4 @@
-package com.example.gadfly.projectgadfly;
+package com.forvm.gadfly.projectgadfly;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -149,7 +149,7 @@ public class LegislativeActivity extends AppCompatActivity
         if (scanningResult != null) {
             scanFormat = scanningResult.getFormatName();
             scanContent = scanningResult.getContents();
-            String actualurl = "http://gadfly.mobi/services/v1/representatives?address="; //"http://gadfly.mobi/services/v1/script?id="
+            String actualurl = "http://gadfly.mobi/services/v1/script?id=";
             if (scanContent != null && scanContent.startsWith(actualurl)) {
                 progressDialog = new ProgressDialog(LegislativeActivity.this);
                 progressDialog.setMessage("Getting call scripts..");

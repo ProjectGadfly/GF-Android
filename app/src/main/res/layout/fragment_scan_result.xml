@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.gadfly.projectgadfly.ScanResult"
+    tools:context="com.forvm.gadfly.projectgadfly.ScanResult"
     android:id="@+id/scan_layout"
     android:orientation="vertical">
 
@@ -11,12 +11,36 @@
     android:layout_width="match_parent"
     android:layout_height="0dp"
     android:layout_weight="0.5">
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/scanResultTxtV"
-        android:fontFamily="sans-serif-smallcaps"
-        android:text=""/>
+        android:orientation="vertical">
+        <TextView
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/scanResultTitle"
+            android:fontFamily="sans-serif-smallcaps"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:text=""
+            android:textColor="@color/colorPrimary"
+            android:padding="5dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/scanResultTags"
+            android:fontFamily="sans-serif"
+            android:padding="2dp"
+            android:textSize="14dp"
+            android:text=""/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/scanResultContent"
+            android:fontFamily="sans-serif"
+            android:text=""/>
+    </LinearLayout>
 </ScrollView>
     <ListView
         android:layout_height="0dp"

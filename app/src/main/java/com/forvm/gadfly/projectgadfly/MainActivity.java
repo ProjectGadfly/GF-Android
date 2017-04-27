@@ -1,4 +1,4 @@
-package com.example.gadfly.projectgadfly;
+package com.forvm.gadfly.projectgadfly;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -34,11 +34,15 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.seatgeek.placesautocomplete.OnPlaceSelectedListener;
 import com.seatgeek.placesautocomplete.PlacesAutocompleteTextView;
 import com.seatgeek.placesautocomplete.model.Place;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -322,14 +326,28 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            if (progressDialog.isShowing()){
-                progressDialog.dismiss();
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString("json", jsonString);
-                editor.apply();
-                Intent intent = new Intent(getApplicationContext(), LegislativeActivity.class);
-                startActivity(intent);
-                finish();
+            JSONObject status = new JSONObject();
+            try {
+                JSONObject jsonObject = new JSONObject(jsonString);
+                status = jsonObject.getJSONObject("Status");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (!status.toString().equalsIgnoreCase("ok")) {
+                if (progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString("json", jsonString);
+                    editor.apply();
+                    Intent intent = new Intent(getApplicationContext(), LegislativeActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            } else {
+                if (progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                    Toast.makeText(getApplicationContext(), "Error getting data. Please try again later.", Toast.LENGTH_LONG);
+                }
             }
         }
     }
@@ -372,12 +390,8 @@ public class MainActivity extends AppCompatActivity
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
 
             // for ActivityCompat#requestPermissions for more details.
-            Toast.makeText(getApplicationContext(), "No Permission", Toast.LENGTH_LONG).show();
             progressDialog.dismiss();
             return;
         }
@@ -391,7 +405,6 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(getApplicationContext(), "Error getting location. Please try again later", Toast.LENGTH_LONG).show();
             progressDialog.dismiss();
             return;
-            //            e.printStackTrace();
         }
         progressDialog.dismiss();
         String streetAddress, city, state, country, postalCode;
@@ -424,6 +437,9 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
+                    Button getLocation = (Button) findViewById(R.id.currLock);
+                    getLocation.setClickable(false);
+                    getLocation.setEnabled(false);
                 }
                 return;
             }

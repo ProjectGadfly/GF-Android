@@ -1,4 +1,4 @@
-package com.example.gadfly.projectgadfly;
+package com.forvm.gadfly.projectgadfly;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -10,6 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -81,7 +85,9 @@ public class ScanResult extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_scan_result, container, false);
-        TextView scanResultView = (TextView) view.findViewById(R.id.scanResultTxtV);
+        TextView scanResultTitle = (TextView) view.findViewById(R.id.scanResultTitle);
+        TextView scanResultContent = (TextView) view.findViewById(R.id.scanResultContent);
+        TextView scanResultTags = (TextView) view.findViewById(R.id.scanResultTags);
         ListView listView = (ListView) view.findViewById(R.id.resultList);
 
       ArrayList<Representatives> arrayOfUsers = DataHolder.getInstance().getData();
@@ -96,13 +102,38 @@ public class ScanResult extends Fragment {
         listView.setAdapter(repsAdapter);
         if (getArguments()!= null) {
             //            scanResultView.setText(getArguments().getString("scanContent"));
-            scanResultView.setText(jsonString);
+            try {
+                JSONObject jsonObject = new JSONObject(jsonString);
+                JSONObject script = jsonObject.getJSONObject("Script");
+                scanResultTitle.setText(script.getString("title"));
+                scanResultContent.setText(script.getString("content"));
+                scanResultTags.setText(getPosition(script.getJSONArray("tags")));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         } else {
             getFragmentManager().popBackStackImmediate();
         }
 
         return view;
 
+    }
+
+    public String getPosition(JSONArray tags) throws JSONException {
+        StringBuilder position = new StringBuilder();
+        for (int i = 0; i < tags.length(); i++) {
+            if (tags.get(i).toString().equalsIgnoreCase("1")) {
+                position.append("Federal");
+            } else if (tags.get(i).toString().equalsIgnoreCase("2")) {
+                position.append("State");
+            } else if (tags.get(i).toString().equalsIgnoreCase("3")) {
+                position.append("Senator");
+            }else if (tags.get(i).toString().equalsIgnoreCase("4")) {
+                position.append("Representative");
+            }
+            position.append(" ");
+        }
+        return "Applicable to: " + position.toString().toUpperCase();
     }
 
     /**

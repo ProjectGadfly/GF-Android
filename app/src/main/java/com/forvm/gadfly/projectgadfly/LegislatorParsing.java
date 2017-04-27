@@ -1,4 +1,4 @@
-package com.example.gadfly.projectgadfly;
+package com.forvm.gadfly.projectgadfly;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -65,6 +65,7 @@ public class LegislatorParsing extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         for (int i = 0; i < jsonArray.length(); i++) {
 
             try {
