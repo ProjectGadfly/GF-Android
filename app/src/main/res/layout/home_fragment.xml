@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.gadfly.projectgadfly.MainActivity"
+    tools:context="com.forvm.gadfly.projectgadfly.MainActivity"
     tools:showIn="@layout/app_bar_main">
     <!--android:background="@color/bg_screen1">-->
 
@@ -81,6 +81,7 @@
                 android:text="@string/get_current_location"
                 android:onClick="getCurrentLocation"
                 android:layout_below="@+id/submitButton"
+                android:id="@+id/currLock"
                 android:layout_centerHorizontal="true"/>
 
         </RelativeLayout>

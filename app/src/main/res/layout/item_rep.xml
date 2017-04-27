@@ -17,8 +17,6 @@
             android:layout_marginRight="5dp"
             android:padding="3dp"/>
 
-    <!--android:background="@drawable/circle_draw"-->
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,14 +30,6 @@
             android:textColor="@color/colorPrimary"
             android:layout_toRightOf="@+id/photo_url"/>
 
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/state"-->
-            <!--android:text="Name"-->
-            <!--android:layout_below="@+id/rep_name"-->
-            <!--android:padding="3dp"-->
-            <!--android:layout_toRightOf="@+id/photo_url"/>-->
 
         <TextView
             android:layout_width="0dp"
@@ -48,14 +38,7 @@
             android:padding="3dp"
             android:layout_toEndOf="@+id/photo_url"
             android:layout_toRightOf="@+id/photo_url"/>
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/email"-->
-            <!--android:layout_toRightOf="@+id/photo_url"-->
-            <!--android:layout_below="@id/district"-->
-            <!--android:padding="3dp"-->
-            <!--android:text="email" />-->
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -75,17 +58,6 @@
         android:padding="3dp"
         android:layout_toRightOf="@+id/photo_url"/>
 
-
-    <!--<Button-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="@string/call_button"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:id="@+id/callButton"-->
-        <!--android:shadowColor="@color/colorPrimary"-->
-        <!--android:layout_toEndOf="@+id/photo_url"-->
-        <!--android:layout_toRightOf="@+id/photo_url"-->
-        <!--android:layout_below="@id/rep_name" />-->
 
     <ImageButton
         android:layout_width="60dp"

@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "com.example.gadfly.projectgadfly"
+        applicationId "com.forvm.gadfly.projectgadfly"
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1
