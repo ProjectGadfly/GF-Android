@@ -92,7 +92,7 @@ public class ScanResult extends Fragment {
 
       ArrayList<Representatives> arrayOfUsers = DataHolder.getInstance().getData();
         try {
-            Object result = new JsonTask().execute(getArguments().getString("scanContent")).get();
+            Object result = new ScanResultJsonTask().execute(getArguments().getString("scanContent")).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -139,7 +139,7 @@ public class ScanResult extends Fragment {
     /**
      * Parsing Json AsyncTask
      */
-    private class JsonTask extends AsyncTask<String, String, String> {
+    public class ScanResultJsonTask extends AsyncTask<String, String, String> {
         protected void onPreExecute() {
             super.onPreExecute();
 //            progressDialog = new ProgressDialog(getApplicationContext());
