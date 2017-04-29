@@ -73,8 +73,6 @@
                 android:layout_below="@+id/places_autocomplete"
                 style="?android:attr/borderlessButtonStyle"/>
 
-
-
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -83,6 +81,16 @@
                 android:layout_below="@+id/submitButton"
                 android:id="@+id/currLock"
                 android:layout_centerHorizontal="true"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CREATE NEW SCRIPT"
+                android:onClick="newScriptPage"
+                android:layout_below="@+id/currLock"
+                android:id="@+id/newScript"
+                android:layout_centerHorizontal="true"/>
+
 
         </RelativeLayout>
 

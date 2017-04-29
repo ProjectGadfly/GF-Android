@@ -125,7 +125,6 @@ public class MainActivity extends AppCompatActivity
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-
                     }
                 });
     }
@@ -444,6 +443,12 @@ public class MainActivity extends AppCompatActivity
                 return;
             }
         }
+    }
+
+    public void newScriptPage(View view) {
+        Intent intent = new Intent(getApplicationContext(), NewScriptActivity.class);
+        startActivity(intent);
+        finish();
     }
 
 }

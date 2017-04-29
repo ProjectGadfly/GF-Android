@@ -56,4 +56,5 @@
     <string name="your_representatives">Your Representatives</string>
     <string name="about_us_title">About Us</string>
     <string name="get_current_location">GET CURRENT LOCATION</string>
+    <string name="title_activity_new_script">NewScriptActivity</string>
 </resources>
