@@ -21,8 +21,6 @@ public class HomeFragment extends Fragment {
     private SharedPreferences.Editor editor;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
-        sharedPreferences = getContext().getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
         v = inflater.inflate(R.layout.home_fragment, container, false);
         return v;
     }

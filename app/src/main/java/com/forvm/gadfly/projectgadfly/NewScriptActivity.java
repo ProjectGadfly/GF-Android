@@ -1,6 +1,7 @@
 package com.forvm.gadfly.projectgadfly;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -66,14 +67,6 @@ public class NewScriptActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                postScript();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -138,8 +131,8 @@ public class NewScriptActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_submit) {
+            postScript();
         }
 
         return super.onOptionsItemSelected(item);
@@ -150,21 +143,35 @@ public class NewScriptActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        AboutFragment aboutFragment;
+        HomeFragment Home = new HomeFragment();
+        //Handle the Home button
+        if (id == R.id.homeView) {
+            if (!fragmentManager.findFragmentByTag("HOMETAG").isVisible())
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.content_main, Home)
+                        .addToBackStack(null)
+                        .commit();
+            //Handle the About button
+        } else if (id == R.id.about) {
+            aboutFragment = new AboutFragment();
+            fragmentManager
+                    .beginTransaction()
+                    .add(aboutFragment, "ABOUTTAG")
+                    .replace(R.id.content_main, aboutFragment)
+                    .addToBackStack(null)
+                    .commit();
+            //Handle the Tutorial button
+        } else if (id == R.id.tutorial) {
+            Intent intent = new Intent(getApplicationContext(), Introduction.class);
+            SharedPreferences pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putBoolean("not_first_run", false);
+            editor.apply();
+            startActivity(intent);
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -290,6 +297,3 @@ public class NewScriptActivity extends AppCompatActivity
         return bitmap;
     }
 }
-
-
-
