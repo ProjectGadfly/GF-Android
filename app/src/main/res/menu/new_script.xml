@@ -12,7 +12,5 @@
         android:orderInCategory="100"
         android:title="SHARE"
         android:icon="@drawable/ic_menu_share"
-        app:showAsAction="always"
-        android:visible="false"
-        android:actionProviderClass="android.widget.ShareActionProvider"/>
+        app:showAsAction="always" />
 </menu>
