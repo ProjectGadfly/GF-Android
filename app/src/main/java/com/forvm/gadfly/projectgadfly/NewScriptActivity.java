@@ -20,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +56,8 @@ public class NewScriptActivity extends AppCompatActivity
     ProgressDialog progressDialog;
     String titleS = "";
     String contentS = "";
+    int fedOrState = 1;
+    int repOrSen = 3;
     private FragmentManager fragmentManager;
     private CreateScript createScript;
     private ScriptSuccess scriptSuccess;
@@ -86,9 +89,23 @@ public class NewScriptActivity extends AppCompatActivity
     }
 
     private void postScript() {
-
         final EditText title = (EditText) findViewById(R.id.scriptTitle);
         final EditText content = (EditText) findViewById(R.id.scriptContent);
+        final RadioButton federal = (RadioButton) findViewById(R.id.fedButton);
+        final RadioButton senator = (RadioButton) findViewById(R.id.senatorButton);
+        final RadioButton rep = (RadioButton) findViewById(R.id.repButton);
+        final RadioButton state = (RadioButton) findViewById(R.id.stateButton);
+        if (federal.isChecked()) {
+            fedOrState = 1;
+        } else if (state.isChecked()) {
+            fedOrState = 2;
+        }
+
+        if (senator.isChecked()) {
+            repOrSen = 3;
+        } else if (rep.isChecked()) {
+            repOrSen = 4;
+        }
         progressDialog = new ProgressDialog(NewScriptActivity.this);
         progressDialog.setMessage("Posting Script");
         progressDialog.show();
@@ -120,6 +137,7 @@ public class NewScriptActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.new_script, menu);
+        menu.findItem(R.id.action_share).setVisible(false);
         return true;
     }
 
@@ -148,12 +166,9 @@ public class NewScriptActivity extends AppCompatActivity
         HomeFragment Home = new HomeFragment();
         //Handle the Home button
         if (id == R.id.homeView) {
-            if (!fragmentManager.findFragmentByTag("HOMETAG").isVisible())
-                fragmentManager
-                        .beginTransaction()
-                        .replace(R.id.content_main, Home)
-                        .addToBackStack(null)
-                        .commit();
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
             //Handle the About button
         } else if (id == R.id.about) {
             aboutFragment = new AboutFragment();
@@ -200,7 +215,7 @@ public class NewScriptActivity extends AppCompatActivity
 
                 OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
                 String write = "title=" + titleS + "&"  +
-                        "content=" + contentS + "&" + "tags=1";
+                        "content=" + contentS + "&" + "tags=" + fedOrState + "&" + "tags=" + repOrSen;
                 writer.write(write);
                 writer.flush();
                 writer.close();
