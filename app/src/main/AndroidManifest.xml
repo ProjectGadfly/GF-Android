@@ -63,7 +63,8 @@
         </activity>
         <activity
             android:name=".NewScriptActivity"
-            android:label="@string/title_activity_new_script"
+            android:configChanges="keyboardHidden|orientation|screenLayout|screenSize"
+            android:label="Create a Script"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
