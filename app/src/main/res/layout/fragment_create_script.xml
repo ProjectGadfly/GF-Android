@@ -4,14 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.forvm.gadfly.projectgadfly.CreateScript"
-    android:id="@+id/fragment_create_script">
+    android:id="@+id/fragment_create_script"
+    android:clickable="true"
+    android:focusableInTouchMode="true" >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CREATE A NEW SCRIPT"
-        android:textSize="20sp"
-        android:layout_gravity="center_horizontal"/>
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="CREATE A NEW SCRIPT"-->
+        <!--android:textSize="22sp"-->
+        <!--android:layout_gravity="center_horizontal"/>-->
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,7 +30,8 @@
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:id="@+id/fedState">
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,7 +46,8 @@
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:id="@+id/RepSen">
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,6 +59,5 @@
             android:id="@+id/repButton"
             android:text="Representative"/>
     </RadioGroup>
-
 
 </LinearLayout>

@@ -19,8 +19,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -116,14 +118,6 @@ public class NewScriptActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        View contentView =  getWindow().findViewById(R.id.fragment_create_script);
-
-
-    }
-
-    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -150,10 +144,41 @@ public class NewScriptActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_submit) {
-            postScript();
+            if (checkValidScript()) {
+                hideKeyboard();
+                postScript();
+            }
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public boolean checkValidScript() {
+        EditText title = (EditText) findViewById(R.id.scriptTitle);
+        final EditText content = (EditText) findViewById(R.id.scriptContent);
+        final RadioButton federal = (RadioButton) findViewById(R.id.fedButton);
+        final RadioButton senator = (RadioButton) findViewById(R.id.senatorButton);
+        final RadioButton rep = (RadioButton) findViewById(R.id.repButton);
+        final RadioButton state = (RadioButton) findViewById(R.id.stateButton);
+        boolean emptyContent = content.getText().toString().isEmpty();
+        boolean emptyTitle = title.getText().toString().isEmpty();
+//        RadioGroup fedState = (RadioGroup) findViewById(R.id.fedState);
+//        RadioGroup RepSen = (RadioGroup) findViewById(R.id.RepSen);
+        if (emptyContent || emptyTitle) {
+            if (emptyTitle) {
+                Toast.makeText(getApplicationContext(),"Enter a title",Toast.LENGTH_LONG).show();
+                return false;
+            } else if (emptyContent) {
+                Toast.makeText(getApplicationContext(),"Content cannot be empty",Toast.LENGTH_LONG).show();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -163,7 +188,6 @@ public class NewScriptActivity extends AppCompatActivity
         int id = item.getItemId();
         FragmentManager fragmentManager = getSupportFragmentManager();
         AboutFragment aboutFragment;
-        HomeFragment Home = new HomeFragment();
         //Handle the Home button
         if (id == R.id.homeView) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
