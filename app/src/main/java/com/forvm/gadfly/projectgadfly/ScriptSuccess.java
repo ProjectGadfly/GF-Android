@@ -44,8 +44,7 @@ public class ScriptSuccess extends Fragment {
     private ImageView imageView;
     private Bitmap bmp;
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String scriptID;
 
 
     public ScriptSuccess() {
@@ -56,7 +55,7 @@ public class ScriptSuccess extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        String scriptID = getArguments().getString("scriptID");
+        scriptID = getArguments().getString("scriptID");
         byte[] byteArray = getArguments().getByteArray("image");
         bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         View v = inflater.inflate(R.layout.fragment_script_success, container, false);
@@ -74,7 +73,6 @@ public class ScriptSuccess extends Fragment {
         textView = (TextView) v.findViewById(R.id.SHOWSCRIPT);
         imageView = (ImageView) v.findViewById(R.id.QRCODE);
         imageView.setImageBitmap(bmp);
-        textView.setText(scriptID);
         return v;
     }
 
@@ -104,7 +102,7 @@ public class ScriptSuccess extends Fragment {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.putExtra(Intent.EXTRA_TEXT,
-                textView.getText());
+                scriptID);
         File imagePath = new File(getContext().getCacheDir(), "images");
         File newFile = new File(imagePath, "image.png");
         Uri contentUri = FileProvider.getUriForFile(getContext(), "com.forvm.gadfly.fileprovider", newFile);
@@ -114,9 +112,4 @@ public class ScriptSuccess extends Fragment {
         shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
         startActivity(Intent.createChooser(shareIntent,"Share via"));
     }
-    //    private void setShareIntent(Intent shareIntent) {
-//        if (mShareActionProvider != null) {
-//            mShareActionProvider.setShareIntent(shareIntent);
-//        }
-//    }
 }

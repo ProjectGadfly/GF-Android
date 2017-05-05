@@ -4,60 +4,61 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.forvm.gadfly.projectgadfly.CreateScript"
-    android:id="@+id/fragment_create_script"
     android:clickable="true"
     android:focusableInTouchMode="true" >
 
-    <!--<TextView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="CREATE A NEW SCRIPT"-->
-        <!--android:textSize="22sp"-->
-        <!--android:layout_gravity="center_horizontal"/>-->
-    <EditText
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:hint="Title"
-        android:id="@+id/scriptTitle"/>
-    <EditText
+        android:paddingTop="16dp">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:hint="@string/title_hint"
+            android:id="@+id/scriptTitle"/>
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.5"
-        android:gravity="start"
-        android:hint="Content"
-        android:id="@+id/scriptContent"/>
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/content_hint"
+            android:id="@+id/scriptContent"/>
+    </android.support.design.widget.TextInputLayout>
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/fedState">
+        android:paddingTop="16dp">
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/fedButton"
-            android:text="Federal"/>
+            android:text="@string/federal_button_text"/>
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/stateButton"
-            android:text="State"/>
+            android:text="@string/state_button_text"/>
     </RadioGroup>
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/RepSen">
+        android:paddingTop="16dp">
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/senatorButton"
-            android:text="Senator"/>
+            android:text="@string/senator_button_text"/>
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/repButton"
-            android:text="Representative"/>
+            android:text="@string/representative_button_text"/>
     </RadioGroup>
 
 </LinearLayout>

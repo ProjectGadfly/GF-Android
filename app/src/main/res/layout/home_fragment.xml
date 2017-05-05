@@ -33,7 +33,6 @@
                 android:adjustViewBounds="true"
                 android:src="@drawable/gadfly_logo"
                 android:layout_gravity="center_horizontal"
-                android:id="@+id/logo"
                 android:layout_margin="14dp"/>
 
             <!--<TextView-->
@@ -82,14 +81,14 @@
                 android:id="@+id/currLock"
                 android:layout_centerHorizontal="true"/>
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CREATE NEW SCRIPT"
-                android:onClick="newScriptPage"
-                android:layout_below="@+id/currLock"
-                android:id="@+id/newScript"
-                android:layout_centerHorizontal="true"/>
+            <!--<Button-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="CREATE NEW SCRIPT"-->
+                <!--android:onClick="newScriptPage"-->
+                <!--android:layout_below="@+id/currLock"-->
+                <!--android:id="@+id/newScript"-->
+                <!--android:layout_centerHorizontal="true"/>-->
 
 
         </RelativeLayout>

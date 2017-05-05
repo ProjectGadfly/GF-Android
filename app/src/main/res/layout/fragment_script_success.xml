@@ -3,18 +3,18 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/fragment_script_success"
     tools:context="com.forvm.gadfly.projectgadfly.ScriptSuccess">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello_blank_fragment"
+        android:text="@string/share_code"
         android:id="@+id/SHOWSCRIPT"
-        android:textSize="40sp"/>
+        android:textSize="36sp"/>
 
     <ImageView
+        android:contentDescription="@string/qr_icon_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/QRCODE"/>
