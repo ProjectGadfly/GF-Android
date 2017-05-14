@@ -448,7 +448,6 @@ public class MainActivity extends AppCompatActivity
     public void newScriptPage(View view) {
         Intent intent = new Intent(getApplicationContext(), NewScriptActivity.class);
         startActivity(intent);
-        finish();
     }
 
 }

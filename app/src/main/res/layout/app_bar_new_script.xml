@@ -21,26 +21,5 @@
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_new_script" />
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="6dp">
-
-        <android.support.design.widget.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/fab"
-            android:src="@android:color/transparent" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Submit"
-            android:elevation="16dp"
-            android:textColor="@android:color/white"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-    </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>
