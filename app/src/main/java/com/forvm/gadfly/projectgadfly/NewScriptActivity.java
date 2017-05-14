@@ -99,13 +99,16 @@ public class NewScriptActivity extends AppCompatActivity
     private void postScript() {
         final EditText title = (EditText) findViewById(R.id.scriptTitle);
         final EditText content = (EditText) findViewById(R.id.scriptContent);
-        String text = content.getText().toString();
+        String textC = content.getText().toString();
+        String textT = title.getText().toString();
         try {
-            text = URLEncoder.encode(content.getText().toString(), "UTF-8");
+            textC = URLEncoder.encode(content.getText().toString(), "UTF-8");
+            textT = URLEncoder.encode(title.getText().toString(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        content.setText(text);
+        content.setText(textC);
+        title.setText(textT);
         final RadioButton federal = (RadioButton) findViewById(R.id.fedButton);
         final RadioButton senator = (RadioButton) findViewById(R.id.senatorButton);
         final RadioButton rep = (RadioButton) findViewById(R.id.repButton);
@@ -169,14 +172,8 @@ public class NewScriptActivity extends AppCompatActivity
     public boolean checkValidScript() {
         EditText title = (EditText) findViewById(R.id.scriptTitle);
         final EditText content = (EditText) findViewById(R.id.scriptContent);
-        final RadioButton federal = (RadioButton) findViewById(R.id.fedButton);
-        final RadioButton senator = (RadioButton) findViewById(R.id.senatorButton);
-        final RadioButton rep = (RadioButton) findViewById(R.id.repButton);
-        final RadioButton state = (RadioButton) findViewById(R.id.stateButton);
         boolean emptyContent = content.getText().toString().isEmpty();
         boolean emptyTitle = title.getText().toString().isEmpty();
-//        RadioGroup fedState = (RadioGroup) findViewById(R.id.fedState);
-//        RadioGroup RepSen = (RadioGroup) findViewById(R.id.RepSen);
         if (emptyContent || emptyTitle) {
             if (emptyTitle) {
                 Toast.makeText(getApplicationContext(),"Enter a title",Toast.LENGTH_LONG).show();
@@ -286,17 +283,20 @@ public class NewScriptActivity extends AppCompatActivity
             String scriptID = "";
             String status = "";
             Toast.makeText(getApplicationContext(), jsonString, Toast.LENGTH_LONG);
+            JSONObject jsonObject = null;
             try {
-                JSONObject jsonObject = new JSONObject(jsonString);
-                scriptID = jsonObject.getString("id");
+                jsonObject = new JSONObject(jsonString);
                 status = jsonObject.getString("Status");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             if (status.equalsIgnoreCase("ok")) {
                 if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                    Toast.makeText(getApplicationContext(), scriptID, Toast.LENGTH_LONG).show();
+                    try {
+                        scriptID = jsonObject.getString("id");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     Bundle bundle = new Bundle();
                     scriptID = "http://gadfly.mobi/services/v1/script?id=" + scriptID;
                     Bitmap bitmap = null;
@@ -312,6 +312,7 @@ public class NewScriptActivity extends AppCompatActivity
                     bundle.putString("scriptID", scriptID);
                     scriptSuccess = new ScriptSuccess();
                     scriptSuccess.setArguments(bundle);
+                    progressDialog.dismiss();
                     fragmentManager.beginTransaction()
                             .add(scriptSuccess, "BLANK")
                             .replace(R.id.content_new_script, scriptSuccess)
