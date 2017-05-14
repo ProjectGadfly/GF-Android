@@ -18,6 +18,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.multidex.MultiDex;
@@ -63,6 +64,10 @@ public class MainActivity extends AppCompatActivity
     private Bundle b;
     private SharedPreferences pref;
     private Context context;
+    //    private FloatingActionsMenu mainFab;
+//    private com.getbase.floatingactionbutton.FloatingActionButton csFAB;
+//    private com.getbase.floatingactionbutton.FloatingActionButton qrFAB;
+    private FloatingActionButton csFAB;
 
 
     @Override
@@ -87,6 +92,15 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         changeStatusBarColor();
+
+        csFAB = (FloatingActionButton) findViewById(R.id.csFAB);
+        csFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), NewScriptActivity.class);
+                startActivity(intent);
+            }
+        });
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -345,7 +359,7 @@ public class MainActivity extends AppCompatActivity
             } else {
                 if (progressDialog.isShowing()) {
                     progressDialog.dismiss();
-                    Toast.makeText(getApplicationContext(), "Error getting data. Please try again later.", Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(), "Error getting data. Please try again later.", Toast.LENGTH_LONG).show();
                 }
             }
         }
@@ -444,10 +458,4 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
-
-    public void newScriptPage(View view) {
-        Intent intent = new Intent(getApplicationContext(), NewScriptActivity.class);
-        startActivity(intent);
-    }
-
 }

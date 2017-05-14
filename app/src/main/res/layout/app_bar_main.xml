@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -22,5 +23,43 @@
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_main" />
+
+    <!--<com.getbase.floatingactionbutton.FloatingActionsMenu-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|end"-->
+        <!--android:id="@+id/mainFab"-->
+        <!--android:padding="0dp"-->
+        <!--android:layout_margin="0dp"-->
+        <!--fab:fab_labelStyle="@style/menu_labels_style"-->
+        <!--fab:fab_labelsPosition="left">-->
+        <!--<com.getbase.floatingactionbutton.FloatingActionButton-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--fab:fab_title="Create a new Script"-->
+            <!--fab:fab_size="mini"-->
+            <!--android:id="@+id/csFAB"-->
+            <!--android:padding="0dp"-->
+            <!--android:layout_margin="0dp"-->
+            <!--fab:fab_icon="@drawable/ic_create_white_24dp"/>-->
+        <!--<com.getbase.floatingactionbutton.FloatingActionButton-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--fab:fab_size="mini"-->
+            <!--android:layout_margin="0dp"-->
+            <!--android:id="@+id/qrFAB"-->
+            <!--fab:fab_icon="@drawable/ic_scan_icon"-->
+            <!--android:padding="0dp"-->
+            <!--fab:fab_title="Scan a QR Code"/>-->
+    <!--</com.getbase.floatingactionbutton.FloatingActionsMenu>-->
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:src="@drawable/ic_create_white_24dp"
+        android:background="@color/colorPrimary"
+        android:id="@+id/csFAB"
+        android:layout_margin="@dimen/fab_margin"/>
 
 </android.support.design.widget.CoordinatorLayout>

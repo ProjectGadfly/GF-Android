@@ -26,6 +26,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -50,6 +51,10 @@ public class LegislativeActivity extends AppCompatActivity
     private String scanFormat;
     private String scanContent;
     private ProgressDialog progressDialog;
+    private FloatingActionsMenu mainFab;
+    private com.getbase.floatingactionbutton.FloatingActionButton csFAB;
+    private com.getbase.floatingactionbutton.FloatingActionButton qrFAB;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +71,23 @@ public class LegislativeActivity extends AppCompatActivity
         // Make the status bar transparent
         changeStatusBarColor();
 
+        mainFab = (FloatingActionsMenu) findViewById(R.id.mainFab);
+        qrFAB = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.qrFAB);
+        csFAB = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.csFAB);
+
+
+        csFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), NewScriptActivity.class);
+                startActivity(intent);
+                mainFab.collapse();
+            }
+        });
+
         fragmentManager = getSupportFragmentManager();
 
         pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
 
         //Set up the navigation bar of the activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -78,16 +96,23 @@ public class LegislativeActivity extends AppCompatActivity
         //Set up the QR code scan in response to the scan button
         qrScan = new IntentIntegrator(this);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        //Set up the icon of the button
-        fab.setImageResource(R.drawable.ic_scan_icon);
-        fab.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
-
-        //Initiate scan activity
-        fab.setOnClickListener(new View.OnClickListener() {
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        //Set up the icon of the button
+//        fab.setImageResource(R.drawable.ic_scan_icon);
+//        fab.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+//
+//        //Initiate scan activity
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                qrScan.initiateScan();
+//            }
+//        });
+        qrFAB.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 qrScan.initiateScan();
+                mainFab.collapse();
             }
         });
 

@@ -4,13 +4,13 @@
     <item
         android:id="@+id/action_submit"
         android:orderInCategory="100"
-        android:title="SUBMIT"
         android:icon="@drawable/ic_menu_send"
+        android:title="@string/submit_script_btn"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_share"
         android:orderInCategory="100"
-        android:title="SHARE"
+        android:title="@string/share_script_btn"
         android:icon="@drawable/ic_menu_share"
         app:showAsAction="always" />
 </menu>

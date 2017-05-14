@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.forvm.gadfly.projectgadfly.ScanResult"
-    android:id="@+id/scan_layout"
     android:orientation="vertical">
 
     <!-- TODO: Update blank fragment layout -->
@@ -22,7 +21,7 @@
             android:id="@+id/scanResultTitle"
             android:fontFamily="sans-serif-smallcaps"
             android:textStyle="bold"
-            android:textSize="20sp"
+            android:textSize="30sp"
             android:text=""
             android:textColor="@color/colorPrimary"
             android:padding="5dp"/>
@@ -32,13 +31,14 @@
             android:id="@+id/scanResultTags"
             android:fontFamily="sans-serif"
             android:padding="2dp"
-            android:textSize="14dp"
+            android:textSize="24sp"
             android:text=""/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/scanResultContent"
             android:fontFamily="sans-serif"
+            android:textSize="25sp"
             android:text=""/>
     </LinearLayout>
 </ScrollView>
