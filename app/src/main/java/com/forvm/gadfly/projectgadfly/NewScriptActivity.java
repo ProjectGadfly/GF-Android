@@ -11,6 +11,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -39,15 +42,18 @@ import org.json.JSONObject;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.concurrent.ExecutionException;
 
 import static android.R.attr.width;
@@ -93,6 +99,13 @@ public class NewScriptActivity extends AppCompatActivity
     private void postScript() {
         final EditText title = (EditText) findViewById(R.id.scriptTitle);
         final EditText content = (EditText) findViewById(R.id.scriptContent);
+        String text = content.getText().toString();
+        try {
+            text = URLEncoder.encode(content.getText().toString(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        content.setText(text);
         final RadioButton federal = (RadioButton) findViewById(R.id.fedButton);
         final RadioButton senator = (RadioButton) findViewById(R.id.senatorButton);
         final RadioButton rep = (RadioButton) findViewById(R.id.repButton);
@@ -237,7 +250,7 @@ public class NewScriptActivity extends AppCompatActivity
                 connection.setConnectTimeout(5000);
                 connection.connect();
 
-                OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream(), "UTF-8"));
                 String write = "title=" + titleS + "&"  +
                         "content=" + contentS + "&" + "tags=" + fedOrState + "&" + "tags=" + repOrSen;
                 writer.write(write);

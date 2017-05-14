@@ -93,19 +93,6 @@ public class MainActivity extends AppCompatActivity
 
         changeStatusBarColor();
 
-//        mainFab = (FloatingActionsMenu) findViewById(R.id.mainFab);
-//        qrFAB = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.qrFAB);
-//        csFAB = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.csFAB);
-//
-//        csFAB.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getApplicationContext(), NewScriptActivity.class);
-//                startActivity(intent);
-//                mainFab.collapse();
-//            }
-//        });
-
         csFAB = (FloatingActionButton) findViewById(R.id.csFAB);
         csFAB.setOnClickListener(new View.OnClickListener() {
             @Override

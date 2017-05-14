@@ -12,7 +12,6 @@
         android:text="@string/share_code"
         android:id="@+id/SHOWSCRIPT"
         android:textSize="36sp"/>
-
     <ImageView
         android:contentDescription="@string/qr_icon_desc"
         android:layout_width="wrap_content"

@@ -61,4 +61,7 @@
     <string name="submit_script_btn">SUBMIT</string>
     <string name="share_script_btn">SHARE</string>
     <string name="share_code">Share this QR code to get more people involved in the conversation!</string>
+    <string name="radio_button_explain">Select who this script applies to</string>
+    <string name="txtCredits"><a href="http://www.google.com">Google</a></string>
+
 </resources>

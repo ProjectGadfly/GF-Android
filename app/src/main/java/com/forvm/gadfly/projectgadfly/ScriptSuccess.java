@@ -1,5 +1,6 @@
 package com.forvm.gadfly.projectgadfly;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -10,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -54,6 +56,11 @@ public class ScriptSuccess extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        ProgressDialog pd = new ProgressDialog(getContext());
+        pd.setMessage("Please wait");
+        pd.setCancelable(false);
+        pd.show();
+
         // Inflate the layout for this fragment
         scriptID = getArguments().getString("scriptID");
         byte[] byteArray = getArguments().getByteArray("image");
@@ -73,6 +80,7 @@ public class ScriptSuccess extends Fragment {
         textView = (TextView) v.findViewById(R.id.SHOWSCRIPT);
         imageView = (ImageView) v.findViewById(R.id.QRCODE);
         imageView.setImageBitmap(bmp);
+        pd.dismiss();
         return v;
     }
 

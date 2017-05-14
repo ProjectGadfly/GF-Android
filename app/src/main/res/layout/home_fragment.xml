@@ -23,7 +23,9 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.5"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
 
             <ImageView
                 android:contentDescription="@string/logo_content_description"
@@ -33,7 +35,9 @@
                 android:adjustViewBounds="true"
                 android:src="@drawable/gadfly_logo"
                 android:layout_gravity="center_horizontal"
-                android:layout_margin="14dp"/>
+                android:layout_margin="14dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"/>
 
             <!--<TextView-->
                 <!--android:layout_width="wrap_content"-->
@@ -51,15 +55,19 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.5">
-
-            <com.seatgeek.placesautocomplete.PlacesAutocompleteTextView
-                android:id="@+id/places_autocomplete"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/enter_address_hint"
-                android:focusable="true"
-                app:pacv_googleMapsApiKey="@string/google_maps_key"
-                android:layout_centerHorizontal="true" />
+                android:id="@+id/til">
+                <com.seatgeek.placesautocomplete.PlacesAutocompleteTextView
+                    android:id="@+id/places_autocomplete"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/enter_address_hint"
+                    android:focusable="true"
+                    app:pacv_googleMapsApiKey="@string/google_maps_key"
+                    android:layout_centerHorizontal="true" />
+            </android.support.design.widget.TextInputLayout>
 
             <Button
                 android:layout_width="wrap_content"
@@ -69,7 +77,7 @@
                 android:id="@+id/submitButton"
                 android:onClick="clickAction"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@+id/places_autocomplete"
+                android:layout_below="@+id/til"
                 style="?android:attr/borderlessButtonStyle"/>
 
             <Button
