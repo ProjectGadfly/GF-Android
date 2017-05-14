@@ -4,12 +4,12 @@
       <root url="jar://$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.android.support.test/rules/0.5/annotations.zip!/" />
     </ANNOTATIONS>
     <CLASSES>
-      <root url="jar://$USER_HOME$/.android/build-cache/e351e1e68c9b473c72b99b14d1a9192cefcda7b4/output/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.android/build-cache/e351e1e68c9b473c72b99b14d1a9192cefcda7b4/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/a49b6f3d9d56c776f47cd18fa04fb033d4284c33/output/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/a49b6f3d9d56c776f47cd18fa04fb033d4284c33/output/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$USER_HOME$/AppData/Local/Android/sdk/extras/android/m2repository/com/android/support/test/rules/0.5/rules-0.5-sources.jar!/" />
+      <root url="jar://$USER_HOME$/AppData/Local/Android/Sdk/extras/android/m2repository/com/android/support/test/rules/0.5/rules-0.5-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
