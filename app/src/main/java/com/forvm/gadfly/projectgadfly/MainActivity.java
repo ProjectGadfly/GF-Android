@@ -18,6 +18,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.multidex.MultiDex;
@@ -63,13 +64,10 @@ public class MainActivity extends AppCompatActivity
     private Bundle b;
     private SharedPreferences pref;
     private Context context;
-
-
-    @Override
-    protected void attachBaseContext(Context context) {
-        super.attachBaseContext(context);
-        MultiDex.install(this);
-    }
+    //    private FloatingActionsMenu mainFab;
+//    private com.getbase.floatingactionbutton.FloatingActionButton csFAB;
+//    private com.getbase.floatingactionbutton.FloatingActionButton qrFAB;
+    private FloatingActionButton csFAB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +85,15 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         changeStatusBarColor();
+
+        csFAB = (FloatingActionButton) findViewById(R.id.csFAB);
+        csFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), NewScriptActivity.class);
+                startActivity(intent);
+            }
+        });
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -216,20 +223,18 @@ public class MainActivity extends AppCompatActivity
 
 
     private ProgressDialog progressDialog;
+    private String text;
+
     //Setting the response after clicking the Legislator Adapter button
     //If the user is not connected to the Internet, a warning message
     public void clickAction(View v) throws ExecutionException, InterruptedException {
         View parentView = v.getRootView();
         PlacesAutocompleteTextView placesTextView = (PlacesAutocompleteTextView) parentView.findViewById(R.id.places_autocomplete);
-        String text = placesTextView.getText().toString();
+        text = placesTextView.getText().toString();
 
         View contentView = getWindow().findViewById(R.id.content_main);
         text = text.replaceAll(" ", "+");
         if (!text.isEmpty() && isConnected() && isValidAddress(text)) {
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putString("address_field", text);
-            editor.putBoolean("have_address", true);
-            editor.apply();
             progressDialog = new ProgressDialog(MainActivity.this);
             progressDialog.setMessage("Getting representatives...");
             progressDialog.show();
@@ -301,7 +306,10 @@ public class MainActivity extends AppCompatActivity
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
-                Snackbar.make(getWindow().findViewById(R.id.legislator_page),
+                if (progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                    Snackbar.make(getWindow().findViewById(R.id.content_main),
                         R.string.server_connection_error,
                         Snackbar.LENGTH_LONG)
                         .show();
@@ -325,27 +333,31 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            JSONObject status = new JSONObject();
-            try {
-                JSONObject jsonObject = new JSONObject(jsonString);
-                status = jsonObject.getJSONObject("Status");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            if (!status.toString().equalsIgnoreCase("ok")) {
-                if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                    SharedPreferences.Editor editor = pref.edit();
-                    editor.putString("json", jsonString);
-                    editor.apply();
-                    Intent intent = new Intent(getApplicationContext(), LegislativeActivity.class);
-                    startActivity(intent);
-                    finish();
+            if (jsonString != null) {
+                JSONObject status = new JSONObject();
+                try {
+                    JSONObject jsonObject = new JSONObject(jsonString);
+                    status = jsonObject.getJSONObject("Status");
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            } else {
-                if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                    Toast.makeText(getApplicationContext(), "Error getting data. Please try again later.", Toast.LENGTH_LONG);
+                if (!status.toString().equalsIgnoreCase("ok")) {
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                        SharedPreferences.Editor editor = pref.edit();
+                        editor.putString("address_field", text);
+                        editor.putBoolean("have_address", true);
+                        editor.putString("json", jsonString);
+                        editor.apply();
+                        Intent intent = new Intent(getApplicationContext(), LegislativeActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                } else {
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), "Error getting data. Please try again later.", Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         }
@@ -444,10 +456,4 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
-
-    public void newScriptPage(View view) {
-        Intent intent = new Intent(getApplicationContext(), NewScriptActivity.class);
-        startActivity(intent);
-    }
-
 }

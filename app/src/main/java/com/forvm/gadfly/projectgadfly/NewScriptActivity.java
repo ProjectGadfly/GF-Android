@@ -10,6 +10,10 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
+import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -38,15 +42,18 @@ import org.json.JSONObject;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.concurrent.ExecutionException;
 
 import static android.R.attr.width;
@@ -63,7 +70,6 @@ public class NewScriptActivity extends AppCompatActivity
     private FragmentManager fragmentManager;
     private CreateScript createScript;
     private ScriptSuccess scriptSuccess;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +99,16 @@ public class NewScriptActivity extends AppCompatActivity
     private void postScript() {
         final EditText title = (EditText) findViewById(R.id.scriptTitle);
         final EditText content = (EditText) findViewById(R.id.scriptContent);
+        String textC = content.getText().toString();
+        String textT = title.getText().toString();
+        try {
+            textC = URLEncoder.encode(content.getText().toString(), "UTF-8");
+            textT = URLEncoder.encode(title.getText().toString(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        content.setText(textC);
+        title.setText(textT);
         final RadioButton federal = (RadioButton) findViewById(R.id.fedButton);
         final RadioButton senator = (RadioButton) findViewById(R.id.senatorButton);
         final RadioButton rep = (RadioButton) findViewById(R.id.repButton);
@@ -156,14 +172,8 @@ public class NewScriptActivity extends AppCompatActivity
     public boolean checkValidScript() {
         EditText title = (EditText) findViewById(R.id.scriptTitle);
         final EditText content = (EditText) findViewById(R.id.scriptContent);
-        final RadioButton federal = (RadioButton) findViewById(R.id.fedButton);
-        final RadioButton senator = (RadioButton) findViewById(R.id.senatorButton);
-        final RadioButton rep = (RadioButton) findViewById(R.id.repButton);
-        final RadioButton state = (RadioButton) findViewById(R.id.stateButton);
         boolean emptyContent = content.getText().toString().isEmpty();
         boolean emptyTitle = title.getText().toString().isEmpty();
-//        RadioGroup fedState = (RadioGroup) findViewById(R.id.fedState);
-//        RadioGroup RepSen = (RadioGroup) findViewById(R.id.RepSen);
         if (emptyContent || emptyTitle) {
             if (emptyTitle) {
                 Toast.makeText(getApplicationContext(),"Enter a title",Toast.LENGTH_LONG).show();
@@ -237,7 +247,7 @@ public class NewScriptActivity extends AppCompatActivity
                 connection.setConnectTimeout(5000);
                 connection.connect();
 
-                OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream(), "UTF-8"));
                 String write = "title=" + titleS + "&"  +
                         "content=" + contentS + "&" + "tags=" + fedOrState + "&" + "tags=" + repOrSen;
                 writer.write(write);
@@ -273,17 +283,20 @@ public class NewScriptActivity extends AppCompatActivity
             String scriptID = "";
             String status = "";
             Toast.makeText(getApplicationContext(), jsonString, Toast.LENGTH_LONG);
+            JSONObject jsonObject = null;
             try {
-                JSONObject jsonObject = new JSONObject(jsonString);
-                scriptID = jsonObject.getString("id");
+                jsonObject = new JSONObject(jsonString);
                 status = jsonObject.getString("Status");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             if (status.equalsIgnoreCase("ok")) {
                 if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                    Toast.makeText(getApplicationContext(), scriptID, Toast.LENGTH_LONG).show();
+                    try {
+                        scriptID = jsonObject.getString("id");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     Bundle bundle = new Bundle();
                     scriptID = "http://gadfly.mobi/services/v1/script?id=" + scriptID;
                     Bitmap bitmap = null;
@@ -299,6 +312,7 @@ public class NewScriptActivity extends AppCompatActivity
                     bundle.putString("scriptID", scriptID);
                     scriptSuccess = new ScriptSuccess();
                     scriptSuccess.setArguments(bundle);
+                    progressDialog.dismiss();
                     fragmentManager.beginTransaction()
                             .add(scriptSuccess, "BLANK")
                             .replace(R.id.content_new_script, scriptSuccess)

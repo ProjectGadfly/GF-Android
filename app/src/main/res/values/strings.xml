@@ -4,15 +4,10 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
-
     <string name="submit_button">Submit</string>
-    <string name="title_activity_maps">Map</string>
-    <string name="invalid_address">Invalid Address</string>
     <string name="forget_button">Forget Me</string>
     <string name="rep_content_description">Representative Image</string>
     <string name="drawer_about_us">About Us</string>
-    <string name="drawer_team">Team</string>
     <string name="drawer_home">Home</string>
     <string name="gadfly_email">projectgadfly1@gmail.com</string>
     <string name="call_button">CALL</string>
@@ -21,12 +16,9 @@
     <string name="ask_for_address">Please enter an address.</string>
     <string name="logo_content_description">Gadfly Logo</string>
     <string name="enter_address_hint">Enter address here.</string>
-    <string name="website_button">Website Lookup</string>
-    <string name="title_activity_always_run">AlwaysRunActivity</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_welcome">Home Screen</string>
     <string name="next">NEXT</string>
     <string name="skip">SKIP</string>
     <string name="start">GOT IT</string>
@@ -34,17 +26,7 @@
     <string name="slide_1_title">Project Gadfly</string>
     <string name="slide_1_desc">The easiest way to contact your state and federal representatives.</string>
 
-    <string name="slide_2_title">Convenient</string>
-    <string name="slide_2_desc">We find and display the contact info of your representatives in one place.</string>
 
-    <string name="slide_3_title">Call Scripts</string>
-    <string name="slide_3_desc">Scan a QR code and you will get a call script to make calling your rep easier than ever!</string>
-
-    <string name="slide_4_title">Simplicity</string>
-    <string name="slide_4_desc">No ads or unnecessary content! Just enter your address and you\'re good to go!</string>
-
-    <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
-    <string name="play_again">Play Again</string>
     <string name="get_reps_url">http://gadfly.mobi/services/v1/representatives?address=</string>
     <string name="rescan_qr_code">Please rescan the QR code.</string>
     <string name="server_connection_error">Error connecting to our servers. Please try again later.</string>
@@ -56,5 +38,30 @@
     <string name="your_representatives">Your Representatives</string>
     <string name="about_us_title">About Us</string>
     <string name="get_current_location">GET CURRENT LOCATION</string>
-    <string name="title_activity_new_script">NewScriptActivity</string>
+    <string name="team_image_desc">Image of the original Project Gadfly student team</string>
+    <string name="tutorial_text">Tutorial</string>
+    <string name="title_hint">Title</string>
+    <string name="content_hint">Content</string>
+    <string name="federal_button_text">Federal</string>
+    <string name="state_button_text">State</string>
+    <string name="representative_button_text">Representative</string>
+    <string name="senator_button_text">Senator</string>
+    <string name="qr_icon_desc">QR code generated for created script</string>
+    <string name="call_button_desc">Call button</string>
+    <string name="gadfly_logo_desc">Gadfly Logo</string>
+    <string name="create_icon_desc">Create Icon</string>
+    <string name="slide_2_title">Create</string>
+    <string name="slide_2_desc">Write call scripts that others can use to make the conversation with their representatives easier</string>
+    <string name="share_icon_desc">Share Icon</string>
+    <string name="slide_3_title">Share</string>
+    <string name="slide_3_desc">Share any call scripts you create on the platform of your choice</string>
+    <string name="scan_icon_desc">Scan Icon</string>
+    <string name="slide_4_title"><![CDATA[Scan & Use]]></string>
+    <string name="slide_4_desc">Scan a QR code shared by another user and have their script available on your device</string>
+    <string name="submit_script_btn">SUBMIT</string>
+    <string name="share_script_btn">SHARE</string>
+    <string name="share_code">Share this QR code to get more people involved in the conversation!</string>
+    <string name="radio_button_explain">Select who this script applies to</string>
+    <string name="txtCredits"><a href="http://www.google.com">Google</a></string>
+
 </resources>
