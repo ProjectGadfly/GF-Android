@@ -21,7 +21,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.multidex.MultiDex;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -64,9 +63,6 @@ public class MainActivity extends AppCompatActivity
     private Bundle b;
     private SharedPreferences pref;
     private Context context;
-    //    private FloatingActionsMenu mainFab;
-//    private com.getbase.floatingactionbutton.FloatingActionButton csFAB;
-//    private com.getbase.floatingactionbutton.FloatingActionButton qrFAB;
     private FloatingActionButton csFAB;
 
     @Override
@@ -86,7 +82,7 @@ public class MainActivity extends AppCompatActivity
 
         changeStatusBarColor();
 
-        csFAB = (FloatingActionButton) findViewById(R.id.csFAB);
+        csFAB = (FloatingActionButton) findViewById(R.id.createScriptFAB);
         csFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

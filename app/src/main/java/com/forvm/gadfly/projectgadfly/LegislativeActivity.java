@@ -8,12 +8,10 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -52,8 +50,9 @@ public class LegislativeActivity extends AppCompatActivity
     private String scanContent;
     private ProgressDialog progressDialog;
     private FloatingActionsMenu mainFab;
-    private com.getbase.floatingactionbutton.FloatingActionButton csFAB;
-    private com.getbase.floatingactionbutton.FloatingActionButton qrFAB;
+    private com.getbase.floatingactionbutton.FloatingActionButton createScriptFAB;
+    private com.getbase.floatingactionbutton.FloatingActionButton scanCodeFAB;
+    private com.getbase.floatingactionbutton.FloatingActionButton deleteScriptFAB;
 
 
     @Override
@@ -72,14 +71,23 @@ public class LegislativeActivity extends AppCompatActivity
         changeStatusBarColor();
 
         mainFab = (FloatingActionsMenu) findViewById(R.id.mainFab);
-        qrFAB = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.qrFAB);
-        csFAB = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.csFAB);
+        scanCodeFAB = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.scanCodeFAB);
+        createScriptFAB = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.createScriptFAB);
+        deleteScriptFAB = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.deleteScriptFAB);
 
-
-        csFAB.setOnClickListener(new View.OnClickListener() {
+        createScriptFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), NewScriptActivity.class);
+                startActivity(intent);
+                mainFab.collapse();
+            }
+        });
+
+        deleteScriptFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), DeleteScriptActivity.class);
                 startActivity(intent);
                 mainFab.collapse();
             }
@@ -108,7 +116,7 @@ public class LegislativeActivity extends AppCompatActivity
 //                qrScan.initiateScan();
 //            }
 //        });
-        qrFAB.setOnClickListener(new View.OnClickListener() {
+        scanCodeFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 qrScan.initiateScan();

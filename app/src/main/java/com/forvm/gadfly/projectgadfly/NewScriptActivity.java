@@ -7,15 +7,8 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
-import android.text.Html;
-import android.text.SpannableStringBuilder;
-import android.text.method.LinkMovementMethod;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -26,8 +19,6 @@ import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
@@ -35,28 +26,24 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.concurrent.ExecutionException;
 
-import static android.R.attr.width;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
 
@@ -99,16 +86,17 @@ public class NewScriptActivity extends AppCompatActivity
     private void postScript() {
         final EditText title = (EditText) findViewById(R.id.scriptTitle);
         final EditText content = (EditText) findViewById(R.id.scriptContent);
-        String textC = content.getText().toString();
-        String textT = title.getText().toString();
+        contentS = content.getText().toString();
+        titleS = title.getText().toString();
+        progressDialog = new ProgressDialog(NewScriptActivity.this);
+        progressDialog.setMessage("Posting Script");
+        progressDialog.show();
         try {
-            textC = URLEncoder.encode(content.getText().toString(), "UTF-8");
-            textT = URLEncoder.encode(title.getText().toString(), "UTF-8");
+            contentS = URLEncoder.encode(contentS, "UTF-8");
+            titleS = URLEncoder.encode(titleS, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        content.setText(textC);
-        title.setText(textT);
         final RadioButton federal = (RadioButton) findViewById(R.id.fedButton);
         final RadioButton senator = (RadioButton) findViewById(R.id.senatorButton);
         final RadioButton rep = (RadioButton) findViewById(R.id.repButton);
@@ -124,11 +112,6 @@ public class NewScriptActivity extends AppCompatActivity
         } else if (rep.isChecked()) {
             repOrSen = 4;
         }
-        progressDialog = new ProgressDialog(NewScriptActivity.this);
-        progressDialog.setMessage("Posting Script");
-        progressDialog.show();
-        contentS = content.getText().toString();
-        titleS = title.getText().toString();
         new JsonTask().execute("http://gadfly.mobi/services/v1/script");
 
     }
@@ -158,7 +141,6 @@ public class NewScriptActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_submit) {
             if (checkValidScript()) {
                 hideKeyboard();
@@ -308,6 +290,12 @@ public class NewScriptActivity extends AppCompatActivity
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     byte[] byteArray = stream.toByteArray();
+                    try {
+                        titleS = URLDecoder.decode(titleS, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    bundle.putString("scriptTitle", titleS);
                     bundle.putByteArray("image", byteArray);
                     bundle.putString("scriptID", scriptID);
                     scriptSuccess = new ScriptSuccess();

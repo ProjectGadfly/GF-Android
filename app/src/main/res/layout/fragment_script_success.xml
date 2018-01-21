@@ -5,13 +5,15 @@
     android:layout_height="match_parent"
     tools:context="com.forvm.gadfly.projectgadfly.ScriptSuccess">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/share_code"
         android:id="@+id/SHOWSCRIPT"
-        android:textSize="36sp"/>
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-smallcaps"
+        android:textSize="20sp"
+        android:textAlignment="center"/>
     <ImageView
         android:contentDescription="@string/qr_icon_desc"
         android:layout_width="wrap_content"

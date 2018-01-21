@@ -1,17 +1,17 @@
 package com.forvm.gadfly.projectgadfly;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
-import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,9 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -45,9 +43,9 @@ public class ScriptSuccess extends Fragment {
     private TextView textView;
     private ImageView imageView;
     private Bitmap bmp;
-    // TODO: Rename and change types of parameters
+//    private Bitmap editBitmap;
     private String scriptID;
-
+    private String scriptTitle;
 
     public ScriptSuccess() {
         // Required empty public constructor
@@ -63,6 +61,7 @@ public class ScriptSuccess extends Fragment {
 
         // Inflate the layout for this fragment
         scriptID = getArguments().getString("scriptID");
+        scriptTitle = getArguments().getString("scriptTitle");
         byte[] byteArray = getArguments().getByteArray("image");
         bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         View v = inflater.inflate(R.layout.fragment_script_success, container, false);
@@ -71,6 +70,27 @@ public class ScriptSuccess extends Fragment {
             File cachePath = new File(getContext().getCacheDir(), "images");
             cachePath.mkdirs(); // don't forget to make the directory
             FileOutputStream stream = new FileOutputStream(cachePath + "/image.png"); // overwrites this image every time
+
+            float scale = getContext().getResources().getDisplayMetrics().density;
+            android.graphics.Bitmap.Config bitmapConfig =   bmp.getConfig();
+            // set default bitmap config if none
+            if(bitmapConfig == null) {
+                bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
+            }
+            // resource bitmaps are immutable,
+            // so we need to convert it to mutable one
+            bmp = bmp.copy(bitmapConfig, true);
+
+            Canvas canvas = new Canvas(bmp);
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paint.setColor(Color.BLACK);
+            // text size in pixels
+            paint.setTextSize((int) (35 * scale));
+
+            // draw text to the Canvas center
+
+            canvas.drawText(scriptTitle, 40 * scale, 40 * scale, paint);
+
             bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
             stream.close();
 
