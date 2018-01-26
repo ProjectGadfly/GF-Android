@@ -40,7 +40,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class LegislativeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, ScriptListFragment.OnListFragmentInteractionListener {
 
     private IntentIntegrator qrScan;
     private LegislatorParsing legislatorParsing;
@@ -73,7 +73,7 @@ public class LegislativeActivity extends AppCompatActivity
         mainFab = (FloatingActionsMenu) findViewById(R.id.mainFab);
         scanCodeFAB = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.scanCodeFAB);
         createScriptFAB = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.createScriptFAB);
-        deleteScriptFAB = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.deleteScriptFAB);
+        deleteScriptFAB = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.searchScriptFAB);
 
         createScriptFAB.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,7 +87,7 @@ public class LegislativeActivity extends AppCompatActivity
         deleteScriptFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), DeleteScriptActivity.class);
+                Intent intent = new Intent(getApplicationContext(), SearchScriptActivity.class);
                 startActivity(intent);
                 mainFab.collapse();
             }
@@ -128,7 +128,6 @@ public class LegislativeActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -187,9 +186,8 @@ public class LegislativeActivity extends AppCompatActivity
                 progressDialog = new ProgressDialog(LegislativeActivity.this);
                 progressDialog.setMessage("Getting call scripts..");
                 progressDialog.show();
-//                new JsonTask().execute(getString(R.string.get_reps_url) );
-                new JsonTask().execute(scanContent);
-                return;
+//                new scanCodeTask().execute(getString(R.string.get_reps_url) );
+                new scanCodeTask().execute(scanContent);
             }
         } else {
             Toast toast = Toast.makeText(getApplicationContext(), R.string.rescan_qr_code, Toast.LENGTH_LONG);
@@ -229,6 +227,7 @@ public class LegislativeActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         AboutFragment aboutFragment = new AboutFragment();
+        ScriptListFragment scriptListFragment = new ScriptListFragment();
         int id = item.getItemId();
 
         if (id == R.id.homeView) {
@@ -240,6 +239,11 @@ public class LegislativeActivity extends AppCompatActivity
             fragmentManager
                     .beginTransaction()
                     .replace(R.id.content_main, aboutFragment)
+                    .commit();
+        } else if (id == R.id.scripts) {
+            fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.content_main, scriptListFragment)
                     .commit();
         } else if (id == R.id.tutorial) {
             Intent intent = new Intent(getApplicationContext(), Introduction.class);
@@ -285,10 +289,20 @@ public class LegislativeActivity extends AppCompatActivity
     }
 
     private String jsonString;
+
+    @Override
+    public void onListFragmentInteraction(String item) {
+        Bundle b = new Bundle();
+        b.putString("ticket", item);
+        Intent intent = new Intent(this, SearchScriptActivity.class);
+        intent.putExtras(b);
+        startActivity(intent);
+    }
+
     /**
      * Parsing Json AsyncTask
      */
-    private class JsonTask extends AsyncTask<String, String, String> {
+    private class scanCodeTask extends AsyncTask<String, String, String> {
         protected void onPreExecute() {
             super.onPreExecute();
         }

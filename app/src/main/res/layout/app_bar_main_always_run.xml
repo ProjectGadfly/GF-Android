@@ -47,13 +47,13 @@
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fab:fab_title="Delete A Script"
-            android:id="@+id/deleteScriptFAB"
+            fab:fab_title="Search Scripts"
+            android:id="@+id/searchScriptFAB"
             fab:fab_colorNormal="@color/colorAccent"
             fab:fab_colorPressed="@color/colorAccent"
             android:padding="0dp"
             android:layout_margin="0dp"
-            fab:fab_icon="@drawable/ic_delete_white_24dp"/>
+            fab:fab_icon="@drawable/ic_search_white_24dp"/>
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"

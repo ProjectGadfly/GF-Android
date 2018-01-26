@@ -43,6 +43,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.HashSet;
 
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
@@ -57,10 +58,13 @@ public class NewScriptActivity extends AppCompatActivity
     private FragmentManager fragmentManager;
     private CreateScript createScript;
     private ScriptSuccess scriptSuccess;
+    private SharedPreferences pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
+
         setContentView(R.layout.activity_new_script);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -68,7 +72,6 @@ public class NewScriptActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -112,7 +115,7 @@ public class NewScriptActivity extends AppCompatActivity
         } else if (rep.isChecked()) {
             repOrSen = 4;
         }
-        new JsonTask().execute("http://gadfly.mobi/services/v1/script");
+        new postScriptTask().execute("http://gadfly.mobi/services/v1/script");
 
     }
 
@@ -160,7 +163,8 @@ public class NewScriptActivity extends AppCompatActivity
             if (emptyTitle) {
                 Toast.makeText(getApplicationContext(),"Enter a title",Toast.LENGTH_LONG).show();
                 return false;
-            } else if (emptyContent) {
+            }
+            if (emptyContent) {
                 Toast.makeText(getApplicationContext(),"Content cannot be empty",Toast.LENGTH_LONG).show();
                 return false;
             }
@@ -209,17 +213,18 @@ public class NewScriptActivity extends AppCompatActivity
     }
 
     private String jsonString;
+
     /**
      * Parsing Json AsyncTask
      */
-    private class JsonTask extends AsyncTask<String, String, String> {
+    private class postScriptTask extends AsyncTask<String, String, String> {
         protected void onPreExecute() {
             super.onPreExecute();
         }
 
         protected String doInBackground(String... params) {
             HttpURLConnection connection = null;
-            BufferedReader reader = null;
+            BufferedReader reader;
             try {
                 URL url = new URL(params[0]);
                 connection = (HttpURLConnection) url.openConnection();
@@ -264,7 +269,7 @@ public class NewScriptActivity extends AppCompatActivity
             super.onPostExecute(result);
             String scriptID = "";
             String status = "";
-            Toast.makeText(getApplicationContext(), jsonString, Toast.LENGTH_LONG);
+            String ticket = "";
             JSONObject jsonObject = null;
             try {
                 jsonObject = new JSONObject(jsonString);
@@ -276,6 +281,7 @@ public class NewScriptActivity extends AppCompatActivity
                 if (progressDialog.isShowing()) {
                     try {
                         scriptID = jsonObject.getString("id");
+                        ticket =  jsonObject.getString("ticket");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -295,6 +301,16 @@ public class NewScriptActivity extends AppCompatActivity
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
+                    SharedPreferences.Editor editor = pref.edit();
+                    HashSet<String> tickets = (HashSet<String>) pref.getStringSet("tickets", null);
+                    if (tickets == null) {
+                        tickets = new HashSet<>();
+                        tickets.add(ticket);
+                    } else {
+                        tickets.add(ticket);
+                    }
+                    editor.putStringSet("tickets", tickets);
+                    editor.apply();
                     bundle.putString("scriptTitle", titleS);
                     bundle.putByteArray("image", byteArray);
                     bundle.putString("scriptID", scriptID);

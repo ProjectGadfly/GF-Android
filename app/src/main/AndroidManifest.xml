@@ -68,9 +68,9 @@
             android:label="Create a Script"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".DeleteScriptActivity"
+            android:name=".SearchScriptActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|screenSize"
-            android:label="Delete a Script"
+            android:label="Search Scripts"
             android:theme="@style/AppTheme.NoActionBar" />
 
     </application>

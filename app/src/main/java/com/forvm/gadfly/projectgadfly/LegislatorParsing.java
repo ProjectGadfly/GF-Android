@@ -49,10 +49,8 @@ public class LegislatorParsing extends Fragment {
         String text = getArguments().getString("json");
         String address = getArguments().getString("address");
         JSONObject jsonObject = null;
-//        JSONArray jsonArray = null;
 
         try {
-//            jsonArray = new JSONArray(text);
             jsonObject = new JSONObject(text);
         } catch (JSONException e) {
             e.printStackTrace();

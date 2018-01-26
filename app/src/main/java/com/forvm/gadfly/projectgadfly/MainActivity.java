@@ -310,7 +310,6 @@ public class MainActivity extends AppCompatActivity
                         Snackbar.LENGTH_LONG)
                         .show();
                 e.printStackTrace();
-
             } finally {
                 if (connection != null) {
                     connection.disconnect();
@@ -366,7 +365,6 @@ public class MainActivity extends AppCompatActivity
         progressDialog.setCancelable(false);
         progressDialog.show();
         final Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        //        Toast.makeText(getApplicationContext(), "JAJAJA", Toast.LENGTH_LONG).show();
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         LocationListener locationListener = new LocationListener() {
             @Override
