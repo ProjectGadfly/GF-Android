@@ -168,6 +168,13 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.content_main, aboutFragment)
                     .addToBackStack(null)
                     .commit();
+            // Handle the Script Button
+        } else if (id == R.id.scripts) {
+            ScriptListFragment scriptListFragment = new ScriptListFragment();
+            fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.content_main, scriptListFragment)
+                    .commit();
             //Handle the Tutorial button
         } else if (id == R.id.tutorial) {
             Intent intent = new Intent(getApplicationContext(), Introduction.class);
@@ -305,7 +312,7 @@ public class MainActivity extends AppCompatActivity
                 if (progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
-                    Snackbar.make(getWindow().findViewById(R.id.content_main),
+                Snackbar.make(getWindow().findViewById(R.id.content_main),
                         R.string.server_connection_error,
                         Snackbar.LENGTH_LONG)
                         .show();

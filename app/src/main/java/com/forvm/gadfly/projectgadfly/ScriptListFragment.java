@@ -12,8 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * A fragment representing a list of Items.
@@ -29,7 +32,7 @@ public class ScriptListFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private String JSON;
-    private ArrayList<String> list = new ArrayList<>();
+    private ArrayList<TicketScript> list = new ArrayList<>();
     private SharedPreferences pref;
 
     /**
@@ -58,10 +61,20 @@ public class ScriptListFragment extends Fragment {
 
         pref = getActivity().getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
 
-        HashSet<String> tickets = (HashSet<String>) pref.getStringSet("tickets", null);
-
+        String tickets = pref.getString("tickets", null);
         if (tickets != null) {
-            list.addAll(tickets);
+            JSONObject ticketJSON = null;
+            try {
+                ticketJSON = new JSONObject(tickets);
+                Iterator<String> ticketIDs = ticketJSON.keys();
+                while (ticketIDs.hasNext()) {
+                    String curTicket = ticketIDs.next();
+                    TicketScript ticketScript = new TicketScript(curTicket, ticketJSON.getString(curTicket));
+                    list.add(ticketScript);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -117,6 +130,6 @@ public class ScriptListFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(String item);
+        void onListFragmentInteraction(TicketScript item);
     }
 }

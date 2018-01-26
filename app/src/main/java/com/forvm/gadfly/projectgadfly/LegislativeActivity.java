@@ -291,9 +291,9 @@ public class LegislativeActivity extends AppCompatActivity
     private String jsonString;
 
     @Override
-    public void onListFragmentInteraction(String item) {
+    public void onListFragmentInteraction(TicketScript item) {
         Bundle b = new Bundle();
-        b.putString("ticket", item);
+        b.putString("ticket", item.getTicket());
         Intent intent = new Intent(this, SearchScriptActivity.class);
         intent.putExtras(b);
         startActivity(intent);

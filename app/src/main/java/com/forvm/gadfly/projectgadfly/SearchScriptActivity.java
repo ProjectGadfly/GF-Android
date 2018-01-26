@@ -54,17 +54,20 @@ public class SearchScriptActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
-     FragmentManager fragmentManager;
-     DeleteScript deleteScript;
-     String scriptID = "";
-     String scriptTitle = "";
-     ScriptSuccess scriptSuccess;
-     Bundle bundle;
-     ProgressDialog progressDialog;
+    private FragmentManager fragmentManager;
+    private DeleteScript deleteScript;
+    private String scriptID = "";
+    private String scriptTitle = "";
+    private ScriptSuccess scriptSuccess;
+    private Bundle bundle;
+    private ProgressDialog progressDialog;
+    private SharedPreferences pref;
+    private String scriptTicket = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
         setContentView(R.layout.activity_delete_script);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -90,20 +93,20 @@ public class SearchScriptActivity extends AppCompatActivity
                 .add(deleteScript, "BLANK")
                 .replace(R.id.content_new_script, deleteScript)
                 .commit();
-
-
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Bundle bundle = getIntent().getExtras();
-        String ticket = bundle.getString("ticket");
-        if (ticket != null) {
-            EditText editText = (EditText) findViewById(R.id.deleteTicketNumber);
-            editText.setText(ticket);
-            Button button = (Button) findViewById(R.id.searchScriptButton);
-            searchScript(button);
+        if (getIntent().hasExtra("ticket")) {
+            Bundle bundle = getIntent().getExtras();
+            String ticket = bundle.getString("ticket");
+            if (ticket != null) {
+                EditText editText = (EditText) findViewById(R.id.deleteTicketNumber);
+                editText.setText(ticket);
+                Button button = (Button) findViewById(R.id.searchScriptButton);
+                searchScript(button);
+            }
         }
     }
 
@@ -127,7 +130,13 @@ public class SearchScriptActivity extends AppCompatActivity
                     .replace(R.id.content_main, aboutFragment)
                     .addToBackStack(null)
                     .commit();
-            //Handle the Tutorial button
+            //Handle the Script button
+        } else if (id == R.id.scripts) {
+            ScriptListFragment scriptListFragment = new ScriptListFragment();
+            fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.content_main, scriptListFragment)
+                    .commit();
         } else if (id == R.id.tutorial) {
             Intent intent = new Intent(this, Introduction.class);
             SharedPreferences pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
@@ -149,7 +158,7 @@ public class SearchScriptActivity extends AppCompatActivity
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         EditText editText = (EditText) findViewById(R.id.deleteTicketNumber);
-                        String scriptTicket = editText.getText().toString();
+                        scriptTicket = editText.getText().toString();
                         progressDialog = new ProgressDialog(SearchScriptActivity.this);
                         progressDialog.setMessage("Deleting Script");
                         progressDialog.show();
@@ -158,7 +167,7 @@ public class SearchScriptActivity extends AppCompatActivity
                 .setNegativeButton(android.R.string.no, null).show();
     }
 
-    Bitmap encodeAsBitmap(String str) throws WriterException {
+    private Bitmap encodeAsBitmap(String str) throws WriterException {
         BitMatrix result;
         try {
             result = new MultiFormatWriter().encode(str,
@@ -181,12 +190,12 @@ public class SearchScriptActivity extends AppCompatActivity
         return bitmap;
     }
 
-     String deleteTicketJSON;
+    private String deleteTicketJSON;
 
     /**
      * Parsing Json AsyncTask
      */
-     class deleteTicketTask extends AsyncTask<String, String, String> {
+    private class deleteTicketTask extends AsyncTask<String, String, String> {
         protected void onPreExecute() {
             super.onPreExecute();
         }
@@ -267,6 +276,23 @@ public class SearchScriptActivity extends AppCompatActivity
                     titleDisplay.setText("");
                     contentDisplay.setText("");
                     progressDialog.dismiss();
+
+                    SharedPreferences.Editor editor = pref.edit();
+                    String tickets = pref.getString("tickets", null);
+
+                    if (tickets != null) {
+                        JSONObject ticketJSON = null;
+                        try {
+                            ticketJSON = new JSONObject(tickets);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        ticketJSON.remove(scriptTicket);
+                        tickets = ticketJSON.toString();
+                    }
+
+                    editor.putString("tickets", tickets);
+                    editor.apply();
                     Toast.makeText(getApplicationContext(), "Script successfully deleted.", Toast.LENGTH_LONG).show();
                 }
             } else {
@@ -278,11 +304,11 @@ public class SearchScriptActivity extends AppCompatActivity
         }
     }
 
-    String getIDJSON;
+    private  String getIDJSON;
     /**
      * Parsing Json AsyncTask
      */
-    class getIDTask extends AsyncTask<String, String, String> {
+    private class getIDTask extends AsyncTask<String, String, String> {
         protected void onPreExecute() {
             super.onPreExecute();
         }
@@ -349,17 +375,17 @@ public class SearchScriptActivity extends AppCompatActivity
         }
     }
 
-     void hideKeyboard() {
+    private  void hideKeyboard() {
 //        InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 //        imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
     }
 
 
-     String getScriptJSON;
+    private String getScriptJSON;
     /**
      * Parsing Json AsyncTask
      */
-     class getScriptTask extends AsyncTask<String, String, String> {
+    private class getScriptTask extends AsyncTask<String, String, String> {
         protected void onPreExecute() {
             super.onPreExecute();
         }
@@ -500,7 +526,7 @@ public class SearchScriptActivity extends AppCompatActivity
         contentDisplay.setText("");
 
         EditText editText = (EditText) findViewById(R.id.deleteTicketNumber);
-        String scriptTicket = editText.getText().toString();
+        scriptTicket = editText.getText().toString();
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Searching for Script");
         progressDialog.show();

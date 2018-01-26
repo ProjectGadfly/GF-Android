@@ -43,7 +43,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.HashSet;
 
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
@@ -59,6 +58,7 @@ public class NewScriptActivity extends AppCompatActivity
     private CreateScript createScript;
     private ScriptSuccess scriptSuccess;
     private SharedPreferences pref;
+    private JSONObject ticketJSONObject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,7 +198,14 @@ public class NewScriptActivity extends AppCompatActivity
                     .replace(R.id.content_main, aboutFragment)
                     .addToBackStack(null)
                     .commit();
-            //Handle the Tutorial button
+            //Handle the Scripts button
+        } else if (id == R.id.scripts) {
+            ScriptListFragment scriptListFragment = new ScriptListFragment();
+            fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.content_main, scriptListFragment)
+                    .commit();
+            //Handle the tutorial button
         } else if (id == R.id.tutorial) {
             Intent intent = new Intent(getApplicationContext(), Introduction.class);
             SharedPreferences pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
@@ -302,14 +309,26 @@ public class NewScriptActivity extends AppCompatActivity
                         e.printStackTrace();
                     }
                     SharedPreferences.Editor editor = pref.edit();
-                    HashSet<String> tickets = (HashSet<String>) pref.getStringSet("tickets", null);
+                    String tickets = pref.getString("tickets", null);
                     if (tickets == null) {
-                        tickets = new HashSet<>();
-                        tickets.add(ticket);
+                        JSONObject jsonObject1 = new JSONObject();
+                        try {
+                            jsonObject1.put(ticket, titleS);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        tickets = jsonObject1.toString();
+                        editor.putString("tickets", tickets);
                     } else {
-                        tickets.add(ticket);
+                        try {
+                            ticketJSONObject = new JSONObject(tickets);
+                            ticketJSONObject.put(ticket, titleS);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        tickets = ticketJSONObject.toString();
+                        editor.putString("tickets", tickets);
                     }
-                    editor.putStringSet("tickets", tickets);
                     editor.apply();
                     bundle.putString("scriptTitle", titleS);
                     bundle.putByteArray("image", byteArray);
