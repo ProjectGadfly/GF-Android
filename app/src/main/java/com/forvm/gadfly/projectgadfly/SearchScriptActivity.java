@@ -85,10 +85,6 @@ public class SearchScriptActivity extends AppCompatActivity
         fragmentManager = getSupportFragmentManager();
         deleteScript = new DeleteScript();
 
-        Bundle bundle = new Bundle();
-        bundle = getIntent().getExtras();
-
-        deleteScript.setArguments(bundle);
         fragmentManager.beginTransaction()
                 .add(deleteScript, "BLANK")
                 .replace(R.id.content_new_script, deleteScript)
@@ -102,7 +98,7 @@ public class SearchScriptActivity extends AppCompatActivity
             Bundle bundle = getIntent().getExtras();
             String ticket = bundle.getString("ticket");
             if (ticket != null) {
-                EditText editText = (EditText) findViewById(R.id.deleteTicketNumber);
+                EditText editText = (EditText) findViewById(R.id.deleteTicketID);
                 editText.setText(ticket);
                 Button button = (Button) findViewById(R.id.searchScriptButton);
                 searchScript(button);
@@ -157,7 +153,7 @@ public class SearchScriptActivity extends AppCompatActivity
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        EditText editText = (EditText) findViewById(R.id.deleteTicketNumber);
+                        EditText editText = (EditText) findViewById(R.id.deleteTicketID);
                         scriptTicket = editText.getText().toString();
                         progressDialog = new ProgressDialog(SearchScriptActivity.this);
                         progressDialog.setMessage("Deleting Script");
@@ -269,7 +265,6 @@ public class SearchScriptActivity extends AppCompatActivity
                     Button deleteButton = (Button) findViewById(R.id.deleteScriptButton);
                     shareButton.setVisibility(View.INVISIBLE);
                     deleteButton.setVisibility(View.INVISIBLE);
-                    hideKeyboard();
 
                     TextView titleDisplay = (TextView) findViewById(R.id.displayTitle);
                     TextView contentDisplay = (TextView) findViewById(R.id.displayContent);
@@ -375,11 +370,6 @@ public class SearchScriptActivity extends AppCompatActivity
         }
     }
 
-    private  void hideKeyboard() {
-//        InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-//        imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
-    }
-
 
     private String getScriptJSON;
     /**
@@ -477,7 +467,6 @@ public class SearchScriptActivity extends AppCompatActivity
 
                     shareButton.setVisibility(View.VISIBLE);
                     deleteButton.setVisibility(View.VISIBLE);
-                    hideKeyboard();
 
                     TextView titleDisplay = (TextView) findViewById(R.id.displayTitle);
                     TextView contentDisplay = (TextView) findViewById(R.id.displayContent);
@@ -518,14 +507,13 @@ public class SearchScriptActivity extends AppCompatActivity
         Button deleteButton = (Button) findViewById(R.id.deleteScriptButton);
         shareButton.setVisibility(View.INVISIBLE);
         deleteButton.setVisibility(View.INVISIBLE);
-        hideKeyboard();
 
         TextView titleDisplay = (TextView) findViewById(R.id.displayTitle);
         TextView contentDisplay = (TextView) findViewById(R.id.displayContent);
         titleDisplay.setText("");
         contentDisplay.setText("");
 
-        EditText editText = (EditText) findViewById(R.id.deleteTicketNumber);
+        EditText editText = (EditText) findViewById(R.id.deleteTicketID);
         scriptTicket = editText.getText().toString();
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Searching for Script");

@@ -18,10 +18,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 
-/**
- * Created by papak on 3/21/2017.
- */
-
 public class RepsAdapter extends ArrayAdapter<Representatives> {
     public RepsAdapter(Context context, ArrayList<Representatives> reps) {
         super(context, 0, reps);

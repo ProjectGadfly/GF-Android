@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     tools:context="com.forvm.gadfly.projectgadfly.CreateScript"
     android:clickable="true"
-    android:focusableInTouchMode="true" >
+    android:focusableInTouchMode="true"
+    android:focusable="true">
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"

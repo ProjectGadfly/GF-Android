@@ -2,10 +2,6 @@ package com.forvm.gadfly.projectgadfly;
 
 import java.io.Serializable;
 
-/**
- * Created by papak on 3/21/2017.
- */
-
 public class Representatives implements Serializable {
 
     public String name, phone_number, email, district, state, photo_url, party, position;

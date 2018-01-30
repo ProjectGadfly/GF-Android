@@ -14,11 +14,11 @@
     <string name="about_us">Project Gadfly is a team of Grinnell students, alum and other volunteers who recognized that in our current political climate, the ability to identify and contact local representatives could do a lot of good.</string>
     <string name="no_internet">There was a problem communicating with the server. Is your device online?</string>
     <string name="ask_for_address">Please enter an address.</string>
+    <string name="not_valid_address">Please enter a more specific address or select one from the autocomplete suggestions.</string>
     <string name="logo_content_description">Gadfly Logo</string>
     <string name="enter_address_hint">Enter address here.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="next">NEXT</string>
     <string name="skip">SKIP</string>
     <string name="start">GOT IT</string>
@@ -30,11 +30,10 @@
     <string name="get_reps_url">http://gadfly.mobi/services/v1/representatives?address=</string>
     <string name="rescan_qr_code">Please rescan the QR code.</string>
     <string name="server_connection_error">Error connecting to our servers. Please try again later.</string>
+    <string name="representative_data_error">Error getting data. Please try again later.</string>
+    <string name="location_data_error">Error getting location. Please try again later</string>
+    <string name="gps_connected_error">Could not identify your location. Do you have GPS turned on?</string>
     <string name="server_invalid_address">invalid address</string>
-    <string name="enter_valid_us_address">Please enter an address in the United States</string>
-    <string name="server_no_us_address">address should be in US</string>
-    <string name="server_broad_address">address too broad</string>
-    <string name="enter_specific_address">Please enter specific street address</string>
     <string name="your_representatives">Your Representatives</string>
     <string name="about_us_title">About Us</string>
     <string name="get_current_location">GET CURRENT LOCATION</string>
@@ -62,6 +61,5 @@
     <string name="share_script_btn">SHARE</string>
     <string name="share_code">Share this QR code to get more people involved in the conversation!</string>
     <string name="radio_button_explain">Select who this script applies to</string>
-    <string name="txtCredits"><a href="http://www.google.com">Google</a></string>
 
 </resources>

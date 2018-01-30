@@ -9,8 +9,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -35,7 +33,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.seatgeek.placesautocomplete.OnPlaceSelectedListener;
 import com.seatgeek.placesautocomplete.PlacesAutocompleteTextView;
@@ -60,7 +57,6 @@ public class MainActivity extends AppCompatActivity
     private FragmentManager fragmentManager;
     private Fragment Home;
     private AboutFragment aboutFragment;
-    private Bundle b;
     private SharedPreferences pref;
     private Context context;
     private FloatingActionButton csFAB;
@@ -69,17 +65,14 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
-        b = new Bundle();
         if (pref.getBoolean("have_address", false)) {
             Intent intent = new Intent(this, LegislativeActivity.class);
-            intent.putExtras(b);
             startActivity(intent);
             finish();
         }
         context = getApplicationContext();
 
         setContentView(R.layout.activity_main);
-
         changeStatusBarColor();
 
         csFAB = (FloatingActionButton) findViewById(R.id.createScriptFAB);
@@ -97,7 +90,6 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -161,20 +153,26 @@ public class MainActivity extends AppCompatActivity
                         .commit();
             //Handle the About button
         } else if (id == R.id.about) {
-            aboutFragment = new AboutFragment();
-            fragmentManager
-                    .beginTransaction()
-                    .add(aboutFragment, "ABOUTTAG")
-                    .replace(R.id.content_main, aboutFragment)
-                    .addToBackStack(null)
-                    .commit();
+            if (!fragmentManager.findFragmentByTag("ABOUTTAG").isVisible()) {
+                aboutFragment = new AboutFragment();
+                fragmentManager
+                        .beginTransaction()
+                        .add(aboutFragment, "ABOUTTAG")
+                        .replace(R.id.content_main, aboutFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
             // Handle the Script Button
         } else if (id == R.id.scripts) {
-            ScriptListFragment scriptListFragment = new ScriptListFragment();
-            fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.content_main, scriptListFragment)
-                    .commit();
+            if (!fragmentManager.findFragmentByTag("SCRIPTTAG").isVisible()) {
+                ScriptListFragment scriptListFragment = new ScriptListFragment();
+                fragmentManager
+                        .beginTransaction()
+                        .add(scriptListFragment, "SCRIPTTAG")
+                        .replace(R.id.content_main, scriptListFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
             //Handle the Tutorial button
         } else if (id == R.id.tutorial) {
             Intent intent = new Intent(getApplicationContext(), Introduction.class);
@@ -189,7 +187,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     // Checks if the user is connected to the internet, returns false if not
-    private boolean isConnected() {
+    boolean isConnected() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -197,18 +195,13 @@ public class MainActivity extends AppCompatActivity
             return true;
         } else {
             hideKeyboard();
-            Toast toast = Toast.makeText(this, R.string.no_internet, Toast.LENGTH_LONG);
-            toast.show();
+            Snackbar.make(getWindow().findViewById(R.id.content_main),R.string.no_internet, Snackbar.LENGTH_LONG).show();
             return false;
         }
     }
 
     public boolean isValidAddress(String address) {
-        if (isAddressInUS(address) && address.length() > 20) {
-            return true;
-        }
-        Toast.makeText(getApplicationContext(),"Please enter a more specific address", Toast.LENGTH_LONG).show();
-        return false;
+        return (isAddressInUS(address) && address.length() > 20);
     }
 
     public boolean isAddressInUS(String location) {
@@ -217,7 +210,7 @@ public class MainActivity extends AppCompatActivity
                 || location.contains("united+States")
                 || location.contains("United+states"))) {
             hideKeyboard();
-            Snackbar.make(getWindow().findViewById(R.id.content_main), "Please enter an address in the United States", Snackbar.LENGTH_LONG)
+            Snackbar.make(getWindow().findViewById(R.id.content_main), R.string.not_valid_address, Snackbar.LENGTH_LONG)
                     .show();
             return false;
         }
@@ -236,6 +229,7 @@ public class MainActivity extends AppCompatActivity
         text = placesTextView.getText().toString();
 
         View contentView = getWindow().findViewById(R.id.content_main);
+//TODO: CHANGE REGEX REPLACE TO UTF ENCODING LIKE IN NEWSCRIPTACTIVITY
         text = text.replaceAll(" ", "+");
         if (!text.isEmpty() && isConnected() && isValidAddress(text)) {
             progressDialog = new ProgressDialog(MainActivity.this);
@@ -245,12 +239,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             if (text.isEmpty()) {
                 Snackbar.make(contentView, R.string.ask_for_address, Snackbar.LENGTH_LONG)
-                        .show();
-            }
-            if (!isConnected()) {
-                Toast toast = Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_LONG);
-                toast.show();
-                Snackbar.make(contentView, R.string.no_internet, Snackbar.LENGTH_LONG)
                         .show();
             }
         }
@@ -358,7 +346,8 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
-                        Toast.makeText(getApplicationContext(), "Error getting data. Please try again later.", Toast.LENGTH_LONG).show();
+//                        Toast.makeText(getApplicationContext(), "Error getting data. Please try again later.", Toast.LENGTH_LONG).show();
+                        Snackbar.make(getWindow().findViewById(R.id.content_main),R.string.representative_data_error, Snackbar.LENGTH_LONG).show();
                     }
                 }
             }
@@ -373,37 +362,11 @@ public class MainActivity extends AppCompatActivity
         progressDialog.show();
         final Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        LocationListener locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
-        Location location = null;
         final int requestCode = 1;
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
 
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
-
-            // for ActivityCompat#requestPermissions for more details.
             progressDialog.dismiss();
             return;
         }
@@ -414,7 +377,8 @@ public class MainActivity extends AppCompatActivity
         try {
             addresses = geocoder.getFromLocation(latitude, longitude, 1);
         } catch (IOException e) {
-            Toast.makeText(getApplicationContext(), "Error getting location. Please try again later", Toast.LENGTH_LONG).show();
+//            Toast.makeText(getApplicationContext(), "Error getting location. Please try again later", Toast.LENGTH_LONG).show();
+            Snackbar.make(getWindow().findViewById(R.id.content_main),R.string.location_data_error, Snackbar.LENGTH_LONG).show();
             progressDialog.dismiss();
             return;
         }
@@ -430,9 +394,9 @@ public class MainActivity extends AppCompatActivity
             PlacesAutocompleteTextView textView = (PlacesAutocompleteTextView) findViewById(R.id.places_autocomplete);
             textView.setText(fullAddress);
         } else {
-            Toast.makeText(getApplicationContext(), "Error. Do you have GPS turned on?", Toast.LENGTH_LONG).show();
+//            Toast.makeText(getApplicationContext(), "Error. Do you have GPS turned on?", Toast.LENGTH_LONG).show();
+            Snackbar.make(getWindow().findViewById(R.id.content_main),R.string.gps_connected_error, Snackbar.LENGTH_LONG).show();
         }
-        // getting GPS status
     }
 
     @Override
@@ -441,19 +405,11 @@ public class MainActivity extends AppCompatActivity
         switch (requestCode) {
             case 1: {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                if (grantResults.length == 0) {
                     Button getLocation = (Button) findViewById(R.id.currLock);
                     getLocation.setClickable(false);
                     getLocation.setEnabled(false);
                 }
-                return;
             }
         }
     }
