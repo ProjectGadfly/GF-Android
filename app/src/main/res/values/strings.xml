@@ -10,11 +10,9 @@
     <string name="drawer_about_us">About Us</string>
     <string name="drawer_home">Home</string>
     <string name="gadfly_email">projectgadfly1@gmail.com</string>
-    <string name="call_button">CALL</string>
-    <string name="about_us">Project Gadfly is a team of Grinnell students, alum and other volunteers who recognized that in our current political climate, the ability to identify and contact local representatives could do a lot of good.</string>
+    <string name="about_us">Project Gadfly is a team of Grinnell students, alum and other volunteers who recognized that in our current political climate, the ability to identify and contact local representative could do a lot of good.</string>
     <string name="no_internet">There was a problem communicating with the server. Is your device online?</string>
     <string name="ask_for_address">Please enter an address.</string>
-    <string name="not_valid_address">Please enter a more specific address or select one from the autocomplete suggestions.</string>
     <string name="logo_content_description">Gadfly Logo</string>
     <string name="enter_address_hint">Enter address here.</string>
 
@@ -24,16 +22,12 @@
     <string name="start">GOT IT</string>
 
     <string name="slide_1_title">Project Gadfly</string>
-    <string name="slide_1_desc">The easiest way to contact your state and federal representatives.</string>
+    <string name="slide_1_desc">The easiest way to contact your state and federal representative.</string>
 
-
-    <string name="get_reps_url">http://gadfly.mobi/services/v1/representatives?address=</string>
+    <string name="empty_field_error">This field cannot be empty!</string>
     <string name="rescan_qr_code">Please rescan the QR code.</string>
-    <string name="server_connection_error">Error connecting to our servers. Please try again later.</string>
-    <string name="representative_data_error">Error getting data. Please try again later.</string>
     <string name="location_data_error">Error getting location. Please try again later</string>
     <string name="gps_connected_error">Could not identify your location. Do you have GPS turned on?</string>
-    <string name="server_invalid_address">invalid address</string>
     <string name="your_representatives">Your Representatives</string>
     <string name="about_us_title">About Us</string>
     <string name="get_current_location">GET CURRENT LOCATION</string>
@@ -46,11 +40,10 @@
     <string name="representative_button_text">Representative</string>
     <string name="senator_button_text">Senator</string>
     <string name="qr_icon_desc">QR code generated for created script</string>
-    <string name="call_button_desc">Call button</string>
     <string name="gadfly_logo_desc">Gadfly Logo</string>
     <string name="create_icon_desc">Create Icon</string>
     <string name="slide_2_title">Create</string>
-    <string name="slide_2_desc">Write call scripts that others can use to make the conversation with their representatives easier</string>
+    <string name="slide_2_desc">Write call scripts that others can use to make the conversation with their representative easier</string>
     <string name="share_icon_desc">Share Icon</string>
     <string name="slide_3_title">Share</string>
     <string name="slide_3_desc">Share any call scripts you create on the platform of your choice</string>
@@ -61,5 +54,10 @@
     <string name="share_script_btn">SHARE</string>
     <string name="share_code">Share this QR code to get more people involved in the conversation!</string>
     <string name="radio_button_explain">Select who this script applies to</string>
+    <string name="menu_scripts_label">Scripts</string>
+    <string name="call">CALL</string>
+    <string name="ticket_number">Ticket Number</string>
+    <string name="share">SHARE</string>
+    <string name="delete">DELETE</string>
 
 </resources>

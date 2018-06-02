@@ -1,6 +1,7 @@
 package com.forvm.gadfly.projectgadfly;
 
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,11 +9,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -27,25 +26,30 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.forvm.gadfly.projectgadfly.adapter.TicketRecyclerAdapter;
+import com.forvm.gadfly.projectgadfly.data.AppDatabase;
+import com.forvm.gadfly.projectgadfly.data.Script;
+import com.forvm.gadfly.projectgadfly.data.Ticket;
+import com.forvm.gadfly.projectgadfly.data.deleteTicketResponse;
+import com.forvm.gadfly.projectgadfly.data.getScriptIDResponse;
+import com.forvm.gadfly.projectgadfly.data.getScriptResponse;
+import com.forvm.gadfly.projectgadfly.network.GadflyAPI;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
@@ -55,62 +59,113 @@ public class SearchScriptActivity extends AppCompatActivity
 
 
     private FragmentManager fragmentManager;
-    private DeleteScript deleteScript;
+    private SearchScriptFragment searchScriptFragment;
     private String scriptID = "";
     private String scriptTitle = "";
     private ScriptSuccess scriptSuccess;
     private Bundle bundle;
     private ProgressDialog progressDialog;
-    private SharedPreferences pref;
     private String scriptTicket = "";
+    private String scriptContent = "";
+    private Retrofit retrofit;
+    private GadflyAPI gadflyAPI;
+    private Button shareButton;
+    private Button deleteButton;
+    private TextView titleDisplay;
+    private TextView contentDisplay;
+    private Button searchScriptButton;
+    private LinearLayout scriptDisplayLayout;
+    private LinearLayout scriptActionLayout;
+    private EditText etSearchTicketID;
+    private List<Ticket> tickets;
+    private TicketRecyclerAdapter ticketRecyclerAdapter;
+    private static final String BASE_URL = "http://63.142.250.185/services/v1/";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
         setContentView(R.layout.activity_delete_script);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this,
                 drawer,
                 toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        fragmentManager = getSupportFragmentManager();
-        deleteScript = new DeleteScript();
+        fragmentManager = getFragmentManager();
+        searchScriptFragment = new SearchScriptFragment();
 
         fragmentManager.beginTransaction()
-                .add(deleteScript, "BLANK")
-                .replace(R.id.content_new_script, deleteScript)
+                .add(searchScriptFragment, "BLANK")
+                .replace(R.id.content_new_script, searchScriptFragment)
                 .commit();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        gadflyAPI = retrofit.create(GadflyAPI.class);
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        new Thread() {
+            @Override
+            public void run() {
+                tickets = AppDatabase.getAppDatabase(SearchScriptActivity.this).ticketDAO().getAll();
+                ticketRecyclerAdapter = new TicketRecyclerAdapter(tickets, SearchScriptActivity.this);
+            }
+        }.start();
+        searchScriptButton = findViewById(R.id.searchScriptButton);
         if (getIntent().hasExtra("ticket")) {
             Bundle bundle = getIntent().getExtras();
             String ticket = bundle.getString("ticket");
+            etSearchTicketID = findViewById(R.id.searchTicketID);
             if (ticket != null) {
-                EditText editText = (EditText) findViewById(R.id.deleteTicketID);
-                editText.setText(ticket);
-                Button button = (Button) findViewById(R.id.searchScriptButton);
-                searchScript(button);
+                etSearchTicketID.setText(ticket);
+                searchScript();
             }
         }
+        searchScriptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchScript();
+            }
+        });
+        shareButton = findViewById(R.id.shareScriptButton);
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareScript();
+            }
+        });
+        deleteButton = findViewById(R.id.deleteScriptButton);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteScript();
+            }
+        });
+        titleDisplay = findViewById(R.id.displayTitle);
+        contentDisplay = findViewById(R.id.displayContent);
+        scriptDisplayLayout = findViewById(R.id.displayScriptLayout);
+        scriptActionLayout = findViewById(R.id.scriptActionLayout);
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         AboutFragment aboutFragment;
         //Handle the Home button
         if (id == R.id.homeView) {
@@ -123,15 +178,15 @@ public class SearchScriptActivity extends AppCompatActivity
             fragmentManager
                     .beginTransaction()
                     .add(aboutFragment, "ABOUTTAG")
-                    .replace(R.id.content_main, aboutFragment)
+                    .replace(R.id.main_activity_layout, aboutFragment)
                     .addToBackStack(null)
                     .commit();
             //Handle the Script button
         } else if (id == R.id.scripts) {
-            ScriptListFragment scriptListFragment = new ScriptListFragment();
+            TicketListFragment ticketListFragment = new TicketListFragment();
             fragmentManager
                     .beginTransaction()
-                    .replace(R.id.content_main, scriptListFragment)
+                    .replace(R.id.main_activity_layout, ticketListFragment)
                     .commit();
         } else if (id == R.id.tutorial) {
             Intent intent = new Intent(this, Introduction.class);
@@ -146,20 +201,53 @@ public class SearchScriptActivity extends AppCompatActivity
         return true;
     }
 
-    public void deleteScript(View view) {
+    public void deleteScript() {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Script?")
                 .setMessage("Are you sure you want to delete this script?")
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(R.drawable.ic_dialog_alert)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        EditText editText = (EditText) findViewById(R.id.deleteTicketID);
-                        scriptTicket = editText.getText().toString();
+                        scriptTicket = etSearchTicketID.getText().toString();
                         progressDialog = new ProgressDialog(SearchScriptActivity.this);
                         progressDialog.setMessage("Deleting Script");
                         progressDialog.show();
-                        new deleteTicketTask().execute("http://gadfly.mobi/services/v1/script?ticket="+scriptTicket);
-                    }})
+                        Call<deleteTicketResponse> deleteTicketResponseCall = gadflyAPI.deleteTicket(scriptTicket);
+                        deleteTicketResponseCall.enqueue(new Callback<deleteTicketResponse>() {
+                            @Override
+                            public void onResponse(Call<deleteTicketResponse> call, Response<deleteTicketResponse> response) {
+                                if (response.body() != null) {
+                                    String status = response.body().getStatus();
+                                    if (status.equalsIgnoreCase("ok")) {
+                                        for (final Ticket ticket : tickets) {
+                                            if (ticket.getTicket().equals(scriptTicket)) {
+                                                new Thread() {
+                                                    @Override
+                                                    public void run() {
+                                                        AppDatabase.getAppDatabase(SearchScriptActivity.this).ticketDAO().delete(ticket);
+                                                        runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                ticketRecyclerAdapter.deleteTicket(ticket);
+                                                            }
+                                                        });
+                                                    }
+                                                }.start();
+                                            }
+                                        }
+                                    }
+                                    progressDialog.dismiss();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<deleteTicketResponse> call, Throwable t) {
+                                progressDialog.dismiss();
+                                Toast.makeText(SearchScriptActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                })
                 .setNegativeButton(android.R.string.no, null).show();
     }
 
@@ -186,347 +274,69 @@ public class SearchScriptActivity extends AppCompatActivity
         return bitmap;
     }
 
-    private String deleteTicketJSON;
-
-    /**
-     * Parsing Json AsyncTask
-     */
-    private class deleteTicketTask extends AsyncTask<String, String, String> {
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        protected String doInBackground(String... params) {
-            HttpURLConnection connection = null;
-            BufferedReader reader;
-            try {
-                URL url = new URL(params[0]);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("DELETE");
-                connection.setRequestProperty("APIKey", "v1key");
-                connection.setConnectTimeout(5000);
-                connection.connect();
-
-                InputStream stream = new BufferedInputStream(connection.getInputStream());
-                reader = new BufferedReader(new InputStreamReader(stream));
-                StringBuilder builder = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    builder.append(line);
-                }
-                deleteTicketJSON = builder.toString();
-                reader.close();
-                return deleteTicketJSON;
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            String status = "";
-            JSONObject jsonObject;
-            try {
-                jsonObject = new JSONObject(deleteTicketJSON);
-                status = jsonObject.getString("Status");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            if (status.equalsIgnoreCase("ok")) {
-                if (progressDialog.isShowing()) {
-                    LinearLayout scriptDisplayLayout = (LinearLayout) findViewById(R.id.displayScript);
-                    LinearLayout scriptFormLayout = (LinearLayout) findViewById(R.id.deleteScriptForm);
-
-                    LinearLayout.LayoutParams displayParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT,
-                            0.0f
-                    );
-                    scriptDisplayLayout.setLayoutParams(displayParams);
-
-                    LinearLayout.LayoutParams formParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT,
-                            1.0f
-                    );
-                    scriptFormLayout.setLayoutParams(formParams);
-
-                    Button shareButton = (Button) findViewById(R.id.shareScriptButton);
-                    Button deleteButton = (Button) findViewById(R.id.deleteScriptButton);
-                    shareButton.setVisibility(View.INVISIBLE);
-                    deleteButton.setVisibility(View.INVISIBLE);
-
-                    TextView titleDisplay = (TextView) findViewById(R.id.displayTitle);
-                    TextView contentDisplay = (TextView) findViewById(R.id.displayContent);
-                    titleDisplay.setText("");
-                    contentDisplay.setText("");
-                    progressDialog.dismiss();
-
-                    SharedPreferences.Editor editor = pref.edit();
-                    String tickets = pref.getString("tickets", null);
-
-                    if (tickets != null) {
-                        JSONObject ticketJSON = null;
-                        try {
-                            ticketJSON = new JSONObject(tickets);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        ticketJSON.remove(scriptTicket);
-                        tickets = ticketJSON.toString();
-                    }
-
-                    editor.putString("tickets", tickets);
-                    editor.apply();
-                    Toast.makeText(getApplicationContext(), "Script successfully deleted.", Toast.LENGTH_LONG).show();
-                }
-            } else {
-                if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                    Toast.makeText(getApplicationContext(), "Error deleting script. Please try again later.", Toast.LENGTH_LONG).show();
-                }
-            }
-        }
-    }
-
-    private  String getIDJSON;
-    /**
-     * Parsing Json AsyncTask
-     */
-    private class getIDTask extends AsyncTask<String, String, String> {
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        protected String doInBackground(String... params) {
-            HttpURLConnection connection = null;
-            BufferedReader reader;
-            try {
-                URL url = new URL(params[0]);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("APIKey", "v1key");
-                connection.setConnectTimeout(5000);
-                connection.connect();
-
-                InputStream stream = new BufferedInputStream(connection.getInputStream());
-                reader = new BufferedReader(new InputStreamReader(stream));
-                StringBuilder builder = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    builder.append(line);
-                }
-                getIDJSON = builder.toString();
-                reader.close();
-                return getIDJSON;
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            String status = "";
-            JSONObject jsonObject = null;
-            try {
-                jsonObject = new JSONObject(getIDJSON);
-                status = jsonObject.getString("Status");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            if (status.equalsIgnoreCase("ok")) {
-                try {
-                    scriptID = jsonObject.getString("id");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                new getScriptTask().execute("http://gadfly.mobi/services/v1/script?id="+scriptID);
-            } else {
-                if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                    Toast.makeText(getApplicationContext(), "Error deleting script. Please try again later.", Toast.LENGTH_LONG).show();
-                }
-            }
-        }
-    }
-
-
-    private String getScriptJSON;
-    /**
-     * Parsing Json AsyncTask
-     */
-    private class getScriptTask extends AsyncTask<String, String, String> {
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        protected String doInBackground(String... params) {
-            HttpURLConnection connection = null;
-            BufferedReader reader;
-            try {
-                URL url = new URL(params[0]);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("APIKey", "v1key");
-                connection.setConnectTimeout(5000);
-                connection.connect();
-
-                InputStream stream = new BufferedInputStream(connection.getInputStream());
-                reader = new BufferedReader(new InputStreamReader(stream));
-                StringBuilder builder = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    builder.append(line);
-                }
-                getScriptJSON = builder.toString();
-                reader.close();
-                return getScriptJSON;
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            String scriptContent = "";
-            String status = "";
-            JSONObject jsonObject = null;
-            JSONObject scriptJson = null;
-            try {
-                jsonObject = new JSONObject(getScriptJSON);
-                status = jsonObject.getString("Status");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            if (status.equalsIgnoreCase("ok")) {
-                if (progressDialog.isShowing()) {
-                    try {
-                        scriptJson = jsonObject.getJSONObject("Script");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    try {
-                        scriptTitle = scriptJson.getString("title");
-                        scriptContent = scriptJson.getString("content");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    LinearLayout.LayoutParams displayParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT,
-                            1.0f
-                    );
-
-
-                    Button shareButton = (Button) findViewById(R.id.shareScriptButton);
-                    Button deleteButton = (Button) findViewById(R.id.deleteScriptButton);
-
-                    LinearLayout scriptDisplayLayout = (LinearLayout) findViewById(R.id.displayScript);
-                    LinearLayout scriptFormLayout = (LinearLayout) findViewById(R.id.deleteScriptForm);
-
-                    scriptDisplayLayout.setLayoutParams(displayParams);
-
-                    LinearLayout.LayoutParams formParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT,
-                            0.0f
-                    );
-                    scriptFormLayout.setLayoutParams(formParams);
-
-                    shareButton.setVisibility(View.VISIBLE);
-                    deleteButton.setVisibility(View.VISIBLE);
-
-                    TextView titleDisplay = (TextView) findViewById(R.id.displayTitle);
-                    TextView contentDisplay = (TextView) findViewById(R.id.displayContent);
-                    titleDisplay.setText(scriptTitle);
-                    contentDisplay.setText(scriptContent);
-                    progressDialog.dismiss();
-                }
-            } else {
-                if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                    Toast.makeText(getApplicationContext(), "Error deleting script. Please try again later.", Toast.LENGTH_LONG).show();
-                }
-            }
-        }
-    }
-
-
-    public void searchScript(View view) {
-
-        LinearLayout scriptDisplayLayout = (LinearLayout) findViewById(R.id.displayScript);
-        LinearLayout scriptFormLayout = (LinearLayout) findViewById(R.id.deleteScriptForm);
-
-        LinearLayout.LayoutParams displayParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                0.0f
-        );
-        scriptDisplayLayout.setLayoutParams(displayParams);
-
-        LinearLayout.LayoutParams formParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                1.0f
-        );
-        scriptFormLayout.setLayoutParams(formParams);
-
-        Button shareButton = (Button) findViewById(R.id.shareScriptButton);
-        Button deleteButton = (Button) findViewById(R.id.deleteScriptButton);
-        shareButton.setVisibility(View.INVISIBLE);
-        deleteButton.setVisibility(View.INVISIBLE);
-
-        TextView titleDisplay = (TextView) findViewById(R.id.displayTitle);
-        TextView contentDisplay = (TextView) findViewById(R.id.displayContent);
-        titleDisplay.setText("");
-        contentDisplay.setText("");
-
-        EditText editText = (EditText) findViewById(R.id.deleteTicketID);
-        scriptTicket = editText.getText().toString();
+    public void searchScript() {
+        scriptTicket = etSearchTicketID.getText().toString();
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Searching for Script");
         progressDialog.show();
-        new getIDTask().execute("http://gadfly.mobi/services/v1/id?ticket="+scriptTicket);
+
+        Call<getScriptIDResponse> getScriptIDResponseCall = gadflyAPI.getScriptID(scriptTicket);
+
+        getScriptIDResponseCall.enqueue(new Callback<getScriptIDResponse>() {
+            @Override
+            public void onResponse(Call<getScriptIDResponse> call, Response<getScriptIDResponse> response) {
+                if (response.body() != null) {
+                    String status = response.body().getStatus();
+                    if (status.equalsIgnoreCase("ok")) {
+                        getScript(response.body().getId());
+                    } else {
+                        Toast.makeText(SearchScriptActivity.this, response.message(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<getScriptIDResponse> call, Throwable t) {
+                Toast.makeText(SearchScriptActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
+            }
+        });
     }
 
-    public void shareScript(View view) {
+    public void getScript(Integer scriptID) {
+        Call<getScriptResponse> getScriptResponseCall = gadflyAPI.getScript(scriptID);
+
+        getScriptResponseCall.enqueue(new Callback<getScriptResponse>() {
+            @Override
+            public void onResponse(Call<getScriptResponse> call, Response<getScriptResponse> response) {
+                if (response.body() != null) {
+                    String status = response.body().getStatus();
+                    if (status.equalsIgnoreCase("ok")) {
+                        Script script = response.body().getScript();
+                        titleDisplay.setText(script.getTitle());
+                        contentDisplay.setText(script.getContent());
+                        scriptDisplayLayout.setVisibility(View.VISIBLE);
+                        scriptActionLayout.setVisibility(View.VISIBLE);
+                    }
+                }
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<getScriptResponse> call, Throwable t) {
+                Toast.makeText(SearchScriptActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
+            }
+        });
+    }
+
+    public void shareScript() {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Generating QR code...");
         progressDialog.show();
 
-        scriptID = "http://gadfly.mobi/services/v1/script?id=" +scriptID;
+        scriptID = BASE_URL + "script?id=" + scriptID;
         Bitmap bitmap = null;
         try {
             bitmap = encodeAsBitmap(scriptID);
@@ -536,7 +346,7 @@ public class SearchScriptActivity extends AppCompatActivity
 
         File cachePath = new File(this.getCacheDir(), "images");
         cachePath.mkdirs(); // don't forget to make the directory
-        FileOutputStream stream ; // overwrites this image every time
+        FileOutputStream stream; // overwrites this image every time
         try {
             stream = new FileOutputStream(cachePath + "/image.png");
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -557,9 +367,7 @@ public class SearchScriptActivity extends AppCompatActivity
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // temp permission for receiving app to read this file
         shareIntent.setDataAndType(contentUri, this.getContentResolver().getType(contentUri));
         shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-        startActivity(Intent.createChooser(shareIntent,"Share via"));
-
+        startActivity(Intent.createChooser(shareIntent, "Share via"));
         progressDialog.dismiss();
     }
-
 }

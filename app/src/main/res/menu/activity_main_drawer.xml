@@ -18,7 +18,7 @@
         <item
             android:id="@+id/scripts"
             android:icon="@drawable/ic_reorder_white_24dp"
-            android:title="Scripts"/>
+            android:title="@string/menu_scripts_label"/>
 
     </group>
 

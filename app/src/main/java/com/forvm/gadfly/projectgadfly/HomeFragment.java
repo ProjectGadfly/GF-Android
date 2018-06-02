@@ -1,13 +1,14 @@
 package com.forvm.gadfly.projectgadfly;
 
+import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 /**
  * Created by papak on 3/22/2017.
@@ -29,5 +30,16 @@ public class HomeFragment extends Fragment {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         ActionBar actionBar = activity.getSupportActionBar();
         actionBar.setTitle(R.string.app_name);
+        final ImageView mainImage = v.findViewById(R.id.mainImage);
+//        mainImage.setBackgroundResource(R.drawable.anim);
+//        mainImage.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                AnimationDrawable frameAnimation =
+//                        (AnimationDrawable) mainImage.getBackground();
+//                frameAnimation.start();
+//            }
+//        });
+
     }
 }

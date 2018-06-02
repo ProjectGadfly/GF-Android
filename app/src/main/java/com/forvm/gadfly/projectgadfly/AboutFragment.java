@@ -1,7 +1,7 @@
 package com.forvm.gadfly.projectgadfly;
 
+import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
@@ -19,7 +19,6 @@ import android.widget.TextView;
 public class AboutFragment extends Fragment {
 
     private View view;
-    //Constructor for AboutFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
          final String htmlText = "<body><h1>Project Gadfly</h1><p>The name Project Gadfly is a reference to Socrates’s comparison of an activist, " +
                  "a social transformer, to a gadfly which “stings” and “whips” a slow, unresponsive " +
@@ -32,10 +31,11 @@ public class AboutFragment extends Fragment {
                  "QR code for said script that can be sent or posted anywhere, thus allowing others " +
                  "to pull up the script directly.</p></body>";
         view = inflater.inflate(R.layout.about_fragment, container, false);
-        TextView text = (TextView) view.findViewById(R.id.us_description);
+        TextView text = view.findViewById(R.id.us_description);
         text.setText(Html.fromHtml(htmlText));
         return view;
     }
+
     public void onResume() {
         super.onResume();
         AppCompatActivity activity = (AppCompatActivity) getActivity();

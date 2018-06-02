@@ -72,7 +72,8 @@
             android:configChanges="keyboardHidden|orientation|screenLayout|screenSize"
             android:label="Search Scripts"
             android:theme="@style/AppTheme.NoActionBar" />
-
+        <activity android:name=".Ask">
+        </activity>
     </application>
 
 </manifest>

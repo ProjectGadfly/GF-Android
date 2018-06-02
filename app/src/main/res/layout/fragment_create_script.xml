@@ -3,15 +3,15 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.forvm.gadfly.projectgadfly.CreateScript"
+    tools:context="com.forvm.gadfly.projectgadfly.CreateScriptFragment"
     android:clickable="true"
     android:focusableInTouchMode="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:padding="10dp">
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="16dp">
+        android:layout_height="wrap_content">
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -19,23 +19,24 @@
             android:hint="@string/title_hint"
             android:id="@+id/scriptTitle"/>
     </android.support.design.widget.TextInputLayout>
+
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp">
+        android:hint="@string/content_hint">
         <EditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxHeight="250dp"
-            android:hint="@string/content_hint"
-            android:id="@+id/scriptContent"/>
+            android:layout_height="100dp"
+            android:id="@+id/scriptContent"
+            android:gravity="bottom"/>
     </android.support.design.widget.TextInputLayout>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        android:text="@string/radio_button_explain"
-        android:paddingTop="16dp"/>
+        android:text="@string/radio_button_explain"/>
+
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -51,11 +52,11 @@
             android:id="@+id/stateButton"
             android:text="@string/state_button_text"/>
     </RadioGroup>
+
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="16dp">
+        android:orientation="horizontal">
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

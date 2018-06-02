@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
 
@@ -31,18 +32,15 @@ public class RepsAdapter extends ArrayAdapter<Representatives> {
 
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_rep, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.representative_row, parent, false);
         }
 
         // Lookup view for data population
-        TextView Name = (TextView) convertView.findViewById(R.id.rep_name);
+        TextView Name = (TextView) convertView.findViewById(R.id.tvRepName);
 
-        TextView Party = (TextView) convertView.findViewById(R.id.party);
+        TextView Party = (TextView) convertView.findViewById(R.id.tvRepParty);
 
-        TextView Position = (TextView) convertView.findViewById(R.id.position);
-        Position.setText(user.position);
-
-        final ImageView Photo = (ImageView) convertView.findViewById(R.id.photo_url);
+        final ImageView Photo = (ImageView) convertView.findViewById(R.id.ivRepImage);
 
         // Populate the data into the template view using the data object
         Name.setText(user.name);
@@ -50,9 +48,10 @@ public class RepsAdapter extends ArrayAdapter<Representatives> {
 
         Glide.with(getContext())
                 .load(user.photo_url)
-                .placeholder(R.drawable.person_outline)
+                .apply(new RequestOptions()
+                        .placeholder(R.drawable.person_outline)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .override(110,110)
+                .override(110,110))
                 .into(Photo);
 
 //        if (!user.photo_url.isEmpty()) {
@@ -98,7 +97,7 @@ public class RepsAdapter extends ArrayAdapter<Representatives> {
         //Passing the phone number to the call button and activate the
         // call activity in response to the button
         ImageButton btn = (ImageButton) convertView.findViewById(R.id.callButton);
-        final TextView phoneNumber = (TextView) convertView.findViewById(R.id.phone);
+        final TextView phoneNumber = (TextView) convertView.findViewById(R.id.tvRepPhoneNumber);
 
         phoneNumber.setText(user.phone_number);
 

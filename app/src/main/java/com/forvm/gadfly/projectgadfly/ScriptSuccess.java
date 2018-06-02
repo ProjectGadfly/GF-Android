@@ -1,17 +1,17 @@
 package com.forvm.gadfly.projectgadfly;
 
+import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -43,18 +43,25 @@ public class ScriptSuccess extends Fragment {
     private TextView textView;
     private ImageView imageView;
     private Bitmap bmp;
-//    private Bitmap editBitmap;
     private String scriptID;
     private String scriptTitle;
+    private Context context;
 
     public ScriptSuccess() {
         // Required empty public constructor
     }
 
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ProgressDialog pd = new ProgressDialog(getContext());
+        ProgressDialog pd = new ProgressDialog(context);
         pd.setMessage("Please wait");
         pd.setCancelable(false);
         pd.show();
@@ -67,30 +74,16 @@ public class ScriptSuccess extends Fragment {
         View v = inflater.inflate(R.layout.fragment_script_success, container, false);
         try {
 
-            File cachePath = new File(getContext().getCacheDir(), "images");
+            File cachePath = new File(context.getCacheDir(), "images");
             cachePath.mkdirs(); // don't forget to make the directory
             FileOutputStream stream = new FileOutputStream(cachePath + "/image.png"); // overwrites this image every time
 
-            float scale = getContext().getResources().getDisplayMetrics().density;
+            float scale = context.getResources().getDisplayMetrics().density;
             android.graphics.Bitmap.Config bitmapConfig =   bmp.getConfig();
-            // set default bitmap config if none
             if(bitmapConfig == null) {
                 bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
             }
-            // resource bitmaps are immutable,
-            // so we need to convert it to mutable one
             bmp = bmp.copy(bitmapConfig, true);
-
-            Canvas canvas = new Canvas(bmp);
-            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            paint.setColor(Color.BLACK);
-            // text size in pixels
-            paint.setTextSize((int) (35 * scale));
-
-            // draw text to the Canvas center
-
-            canvas.drawText(scriptTitle, 40 * scale, 40 * scale, paint);
-
             bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
             stream.close();
 
@@ -113,7 +106,8 @@ public class ScriptSuccess extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        menu.findItem(R.id.action_submit).setVisible(false);
+//        menu.findItem(R.id.action_submit).setVisible(false);
+        menu.findItem(R.id.action_settings).setVisible(false);
         MenuItem shareItem = menu.findItem(R.id.action_share);
         shareItem.setVisible(true);
     }
@@ -131,13 +125,20 @@ public class ScriptSuccess extends Fragment {
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.putExtra(Intent.EXTRA_TEXT,
                 scriptID);
-        File imagePath = new File(getContext().getCacheDir(), "images");
+        File imagePath = new File(context.getCacheDir(), "images");
         File newFile = new File(imagePath, "image.png");
-        Uri contentUri = FileProvider.getUriForFile(getContext(), "com.forvm.gadfly.fileprovider", newFile);
+        Uri contentUri = FileProvider.getUriForFile(context, "com.forvm.gadfly.fileprovider", newFile);
 
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // temp permission for receiving app to read this file
-        shareIntent.setDataAndType(contentUri, getContext().getContentResolver().getType(contentUri));
+        shareIntent.setDataAndType(contentUri, context.getContentResolver().getType(contentUri));
         shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
         startActivity(Intent.createChooser(shareIntent,"Share via"));
+    }
+
+    public void onResume() {
+        super.onResume();
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        ActionBar actionBar = activity.getSupportActionBar();
+        actionBar.setTitle("Share Script");
     }
 }

@@ -2,11 +2,11 @@
 <resources>
     <!--<color name="colorPrimary">#3F51B5</color>-->
 
-    <color name="colorPrimary">#3D1356</color>
-    <color name="colorPrimaryDark">#331E36</color>
+    <color name="colorPrimary">#9C27B0</color>
+    <color name="colorPrimaryDark">#7B1FA2</color>
     <!--<color name="colorPrimaryDark">#303F9F</color>-->
     <!--<color name="colorAccent">#FF4081</color>-->
-    <color name="colorAccent">#20D2BB</color>
+    <color name="colorAccent">#7C4DFF</color>
 
     <!--<color name="bg_screen1">#331E36</color>-->
 
